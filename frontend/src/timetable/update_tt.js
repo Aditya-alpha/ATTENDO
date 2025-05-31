@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { IoMdAdd } from "react-icons/io";
+import Navbar from "../navbar/navbar";
 
 
 export default function UpdateTimeTable () {
@@ -71,8 +72,9 @@ export default function UpdateTimeTable () {
     }
 
     return (
-        <div className="h-full w-full bg-[#262523] text-white px-20 py-6" >
-            <div className="w-full flex justify-between" >
+        <div className="h-screen w-full bg-[#262523] text-white px-20 pb-12" >
+            <Navbar />
+            <div className="w-full flex justify-between mt-6" >
                 <p className="text-3xl font-medium" >Update Time-Table</p>
                 <select value={ttData.branch} onChange={(e) => setTtData(prev => ({...prev, branch: e.target.value}))} className="bg-slate-700 rounded-lg px-4 py-2 text-lg font-medium" >
                     <option value="Mechanical" >Mechanical</option>
@@ -100,12 +102,12 @@ export default function UpdateTimeTable () {
                         <option value="11:30 am to 12:30 pm" >11:30 am to 12:30 pm</option>
                         <option value="12:30 pm to 1:30 pm" >12:30 pm to 1:30 pm</option>
                         <option value="1:30 pm to 2:30 pm" >1:30 pm to 2:30 pm</option>
-                        <option value="2:30 pm to 3:30 p" >2:30 pm to 3:30 pm</option>
+                        <option value="2:30 pm to 3:30 pm" >2:30 pm to 3:30 pm</option>
                         <option value="3:30 pm to 4:30 pm" >3:30 pm to 4:30 pm</option>
                         <option value="4:30 pm to 5:30 pm" >4:30 pm to 5:30 pm</option>
                         <option value="5:30 pm to 6:30 pm" >5:30 pm to 6:30 pm</option>
                     </select>
-                    <input value={ttData.schedule[i].subject} onChange={(e) => handleFieldChange(e, i, "subject")} className="px-4 w-full rounded-lg text-black bg-slate-300 font-medium" placeholder="Enter the name of the subject" />
+                    <input value={ttData.schedule[i].subject} onChange={(e) => handleFieldChange(e, i, "subject")} className="w-full px-4 rounded-lg text-black bg-slate-300 font-medium placeholder:text-gray-600" placeholder="Enter the name of the subject" />
                 </div>
                 )}
                 <div  className="flex self-center gap-8 font-medium text-lg" >
