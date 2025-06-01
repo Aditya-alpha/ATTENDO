@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react"
 import Navbar from "../navbar/navbar"
 import { MdCheckBox, MdCheckBoxOutlineBlank } from "react-icons/md"
+import { useNavigate } from "react-router-dom"
 
 export default function ShowTimeTable() {
 
+    let navigate = useNavigate()
     let [ttData, setTtData] = useState({
-        branch: "Mechanical",
+        branch: "",
         schedule: [{
             time: "",
             subject: ""
@@ -27,12 +29,8 @@ export default function ShowTimeTable() {
     useEffect(() => {
         async function handleFetchTTData() {
             try {
-                const response = await fetch("http://localhost:8000/view_time-table", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ branch: ttData.branch })
+                const response = await fetch(`http://localhost:8000/${username}/mark_attendance`, {
+                    method: "GET"
                 })
                 if (response.ok) {
                     let data = await response.json()
@@ -44,7 +42,7 @@ export default function ShowTimeTable() {
             }
         }
         handleFetchTTData()
-    }, [ttData.branch])
+    }, [username])
 
     useEffect(() => {
         async function handleFetchAttendanceData() {
@@ -71,12 +69,11 @@ export default function ShowTimeTable() {
                 }
             }
             catch (error) {
-                console.log(error)
                 alert("An error occurred. Please try again.")
             }
         }
         handleFetchAttendanceData()
-    }, [ttData.schedule, ttData.branch, attendanceData.name])
+    }, [username, ttData.schedule, ttData.branch, attendanceData.name])
 
     function handleIsAttended(i) {
         setAttendanceData(prev => {
@@ -111,17 +108,10 @@ export default function ShowTimeTable() {
             <Navbar />
             <div className="w-full flex justify-between mt-6" >
                 <p className="text-3xl font-medium" >Time-Table</p>
-                <select value={ttData.branch} onChange={(e) => setTtData(prev => ({ ...prev, branch: e.target.value }))} className="bg-slate-700 rounded-lg px-4 py-2 text-lg font-medium" >
-                    <option value="Mechanical" >Mechanical</option>
-                    <option value="Civil" >Civil</option>
-                    <option value="Textile" >Textile</option>
-                    <option value="Computer Science" >Computer Science</option>
-                    <option value="Electronics" >Electronics</option>
-                    <option value="ExTC" >ExTC</option>
-                    <option value="IT" >IT</option>
-                    <option value="Electrical" >Electrical</option>
-                    <option value="Production" >Production</option>
-                </select>
+                <div className="flex gap-12 text-lg font-medium" >
+                    <button onClick={() => navigate(`/${username}/mark_for_friend`)} className="bg-slate-700 rounded-lg px-8 py-2" >Mark for friend</button>
+                    <p className="bg-slate-700 rounded-lg px-10 py-2" >{ttData.branch}</p>
+                </div>
             </div>
             <div className="my-12 flex flex-col gap-8" >
                 <div className="flex gap-20 text-xl font-medium" >
@@ -130,10 +120,10 @@ export default function ShowTimeTable() {
                     <p className="w-1/5" >Status</p>
                 </div>
                 {ttData.schedule.map((sch, i) => (
-                    <div key={i} className="flex gap-20" >
-                        <p className="w-1/6 bg-slate-700 rounded-lg px-4 py-1 text-lg font-medium" >{sch.time}</p>
-                        <p className="w-2/5 bg-slate-700 rounded-lg px-4 py-1 text-lg font-medium" >{sch.subject}</p>
-                        <p onClick={() => handleIsAttended(i)} className="w-1/5 bg-slate-700 rounded-lg px-4 py-1 text-lg font-medium flex justify-between cursor-pointer" >Attended: {attendanceData.attendance[i]?.attended ? <MdCheckBox className="text-2xl mt-[3px]" /> : <MdCheckBoxOutlineBlank className="text-2xl mt-[3px]" />}</p>
+                    <div key={i} className="flex gap-20 text-lg font-medium" >
+                        <p className="w-1/6 bg-slate-700 rounded-lg px-4 py-1" >{sch.time}</p>
+                        <p className="w-2/5 bg-slate-700 rounded-lg px-4 py-1" >{sch.subject}</p>
+                        <p onClick={() => handleIsAttended(i)} className="w-1/5 bg-slate-700 rounded-lg px-4 py-1 flex justify-between cursor-pointer" >Attended: {attendanceData.attendance[i]?.attended ? <MdCheckBox className="text-2xl mt-[3px]" /> : <MdCheckBoxOutlineBlank className="text-2xl mt-[3px]" />}</p>
                     </div>
                 ))}
                 <button onClick={(e) => handleSaveChanges(e)} className="w-36 bg-slate-700 p-2 rounded-lg self-center mt-2 font-medium text-lg" >Save Changes</button>

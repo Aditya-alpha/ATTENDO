@@ -35,7 +35,6 @@ export default function SignupOTP() {
             }
         }
         catch (error) {
-            console.log(error)
             alert("An error occured. Please try again.")
         }
     }

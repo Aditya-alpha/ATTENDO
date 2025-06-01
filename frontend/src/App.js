@@ -7,6 +7,7 @@ import SignupOTP from './signup/signup-otp';
 import ShowTimeTable from './timetable/view_tt';
 import UpdateTimeTable from './timetable/update_tt';
 import MarkAttendance from './attendance/mark_attendance';
+import ShowRecords from './attendance/attendance_records';
 
 export const Context = React.createContext()
 
@@ -26,6 +27,7 @@ function App() {
           <Route path='/view_time-table' element={<ShowTimeTable />} />
           <Route path='/update_time-table' element={<UpdateTimeTable />} />
           <Route path='/:username/mark_attendance' element={<MarkAttendance />} />
+          <Route path='/:username/attendance_records' element={<ShowRecords />} />
         </Routes>
       </Router>
     </Context.Provider>

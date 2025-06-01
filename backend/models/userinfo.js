@@ -22,6 +22,14 @@ let userSchema = new mongoose.Schema({
     profile_photo: {
         type: String,
         required: true
+    },
+    branch: {
+        type: String,
+        required: true
+    },
+    public: {
+        type: Boolean,
+        default: false
     }
 })
 

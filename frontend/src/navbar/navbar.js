@@ -27,6 +27,7 @@ export default function Navbar() {
                         }
                         <button onClick={() => navigate("/view_time-table")} >View TT</button>
                         <button onClick={() => navigate(`/${username}/mark_attendance`)} >Mark</button>
+                        <button onClick={() => navigate(`/${username}/attendance_records`)} >See Records</button>
                         <button onClick={() => navigate(`/${username}/profile`)} >Profile</button>
                     </div>
                     :

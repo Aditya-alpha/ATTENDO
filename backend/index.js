@@ -74,11 +74,23 @@ app.post("/signup/otp", async (req, res) => {
     try {
         let otpdata = await Otp.findOne({ email: email })
         if (otpdata.otp === parseInt(enteredOtp)) {
+            let branchCode = email.split("@")[1].split(".")[0]
+            let branch
+            if(branchCode === "et") branch = "ExTC"
+            else if(branchCode === "el") branch = "Electrical"
+            else if(branchCode === "me") branch = "Mechanical"
+            else if(branchCode === "it") branch = "Information Technology"
+            else if(branchCode === "cs") branch = "Computer Science"
+            else if(branchCode === "ec") branch = "Electronics"
+            else if(branchCode === "cv") branch = "Civil"
+            else if(branchCode === "pd") branch = "Production"
+            else branch = "Textile"
             await UserInfo.create({
                 username: otpdata.username,
                 email: otpdata.email,
                 password: otpdata.password,
-                profile_photo: otpdata.profile_photo
+                profile_photo: otpdata.profile_photo,
+                branch: branch
             })
             await Otp.deleteOne({ email })
             res.status(200).send({message: "Signup successful!"})
@@ -135,6 +147,18 @@ app.post("/view_time-table", async (req, res) => {
     }
 })
 
+app.get("/:username/mark_attendance", async (req, res) => {
+    let { username } = req.params
+    try {
+        let branchData = await UserInfo.findOne({username}, ("branch"))
+        let data = await TT.findOne({ branch: branchData.branch })
+        res.status(200).json(data)
+    }
+    catch (error) {
+        res.status(500).send({ message: "Internal servor error! Please try again." })
+    }
+})
+
 app.post("/:username/mark_attendance", async (req, res) => {
     let { username } = req.params
     let { attendanceData, type } = req.body
@@ -155,6 +179,19 @@ app.post("/:username/mark_attendance", async (req, res) => {
         catch (error) {
             res.status(500).send({ message: "Internal servor error! Please try again." })
         }
+    }
+})
+
+app.post("/:username/attendance_records", async (req, res) => {
+    let { targetDate } = req.body
+    let { username } = req.params
+    try {
+        let data = await Attendance.findOne({ name: username, date: targetDate })
+        if (data) res.status(200).json(data)
+        else res.status(408).json({ message: "No attendance record found for this date." })
+    }
+    catch (error) {
+        res.status(500).send({ message: "Internal servor error! Please try again." })
     }
 })
 
