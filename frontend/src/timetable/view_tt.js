@@ -36,7 +36,7 @@ export default function ShowTimeTable() {
     }, [ttData.branch])
 
     return (
-        <div className="h-full w-full bg-[#262523] text-white px-20 pb-12" >
+        <div className="h-full min-h-screen w-full bg-[#262523] text-white px-20 pb-12" >
             <Navbar />
             <div className="w-full flex justify-between mt-6" >
                 <p className="text-3xl font-medium" >Time-Table</p>

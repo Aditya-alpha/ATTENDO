@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import Navbar from "../navbar/navbar"
-import { CgCheckO, CgCloseO } from "react-icons/cg";
+import { CgCheckO, CgCloseO } from "react-icons/cg"
 
 export default function ShowRecords() {
 
     let username = window.localStorage.getItem("username")
-    let [targetDate, setTargetDate] = useState(new Date().toISOString().slice(0, 10))
+    let [targetDate, setTargetDate] = useState(new Date(Date.now() - 86400000).toISOString().slice(0, 10))
     let [attendanceData, setAttendanceData] = useState({
         name: "",
         branch: "",
@@ -41,7 +41,7 @@ export default function ShowRecords() {
     }, [targetDate])
 
     return (
-        <div className="h-full w-full bg-[#262523] text-white px-20 pb-12" >
+        <div className="h-full min-h-screen w-full bg-[#262523] text-white px-20 pb-12" >
             <Navbar />
             <div className="w-full flex justify-between mt-6" >
                 <p className="text-3xl font-medium" >Attendance Records</p>
