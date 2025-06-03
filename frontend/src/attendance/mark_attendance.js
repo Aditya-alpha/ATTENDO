@@ -24,9 +24,9 @@ export default function ShowTimeTable() {
         attendance: [{
             time: "",
             subject: "",
-            attended: false
-        }],
-        marked_by_others: ""
+            attended: false,
+            marked_by_others: ""
+        }]
     })
     let [subjectName, setSubjectName] = useState("")
     let [newTiming, setNewTiming] = useState("")
@@ -61,7 +61,7 @@ export default function ShowTimeTable() {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ type: "show" })
+                    body: JSON.stringify({ name: username, type: "show" })
                 })
                 let data = await response.json()
                 if (data) {
@@ -72,7 +72,8 @@ export default function ShowTimeTable() {
                         ...prev, branch: ttData.branch, attendance: ttData.schedule.map(sch => ({
                             time: sch.time,
                             subject: sch.subject,
-                            attended: false
+                            attended: false,
+                            marked_by_others: ""
                         }))
                     }))
                 }
@@ -124,7 +125,7 @@ export default function ShowTimeTable() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ attendanceData: filteredAttendanceData, type: "create" })
+                body: JSON.stringify({ attendanceData: filteredAttendanceData, name: username, type: name === "reset" ? "reset" : "create" })
             })
             if (response.ok) {
                 let data = await response.json()

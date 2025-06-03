@@ -76,14 +76,14 @@ app.post("/signup/otp", async (req, res) => {
         if (otpdata.otp === parseInt(enteredOtp)) {
             let branchCode = email.split("@")[1].split(".")[0]
             let branch
-            if(branchCode === "et") branch = "ExTC"
-            else if(branchCode === "el") branch = "Electrical"
-            else if(branchCode === "me") branch = "Mechanical"
-            else if(branchCode === "it") branch = "Information Technology"
-            else if(branchCode === "cs") branch = "Computer Science"
-            else if(branchCode === "ec") branch = "Electronics"
-            else if(branchCode === "cv") branch = "Civil"
-            else if(branchCode === "pd") branch = "Production"
+            if (branchCode === "et") branch = "ExTC"
+            else if (branchCode === "el") branch = "Electrical"
+            else if (branchCode === "me") branch = "Mechanical"
+            else if (branchCode === "it") branch = "Information Technology"
+            else if (branchCode === "cs") branch = "Computer Science"
+            else if (branchCode === "ec") branch = "Electronics"
+            else if (branchCode === "cv") branch = "Civil"
+            else if (branchCode === "pd") branch = "Production"
             else branch = "Textile"
             await UserInfo.create({
                 username: otpdata.username,
@@ -93,7 +93,7 @@ app.post("/signup/otp", async (req, res) => {
                 branch: branch
             })
             await Otp.deleteOne({ email })
-            res.status(200).send({message: "Signup successful!"})
+            res.status(200).send({ message: "Signup successful!" })
         }
         else {
             res.status(403).send("Incorrect OTP")
@@ -150,7 +150,7 @@ app.post("/view_time-table", async (req, res) => {
 app.get("/:username/mark_attendance", async (req, res) => {
     let { username } = req.params
     try {
-        let branchData = await UserInfo.findOne({username}, ("branch"))
+        let branchData = await UserInfo.findOne({ username }, ("branch"))
         let data = await TT.findOne({ branch: branchData.branch })
         res.status(200).json(data)
     }
@@ -160,12 +160,20 @@ app.get("/:username/mark_attendance", async (req, res) => {
 })
 
 app.post("/:username/mark_attendance", async (req, res) => {
-    let { username } = req.params
-    let { attendanceData, type } = req.body
+    let { attendanceData, name, type } = req.body
     if (type == "create") {
         try {
-            await Attendance.updateOne({name: username, date: new Date().toISOString().slice(0,10)}, {$set: attendanceData}, {upsert: true})
-            res.status(200).send({message: "Saved successfully"})
+            await Attendance.updateOne({ username: name, date: new Date().toISOString().slice(0, 10) }, { $set: attendanceData }, { upsert: true })
+            res.status(200).send({ message: "Saved successfully" })
+        }
+        catch (error) {
+            res.status(500).send({ message: "Internal servor error! Please try again." })
+        }
+    }
+    else if (type == "reset") {
+        try {
+            await Attendance.deleteOne({ username: name, date: new Date().toISOString().slice(0, 10) })
+            res.status(200).send({ message: "Reset successful." })
         }
         catch (error) {
             res.status(500).send({ message: "Internal servor error! Please try again." })
@@ -173,7 +181,7 @@ app.post("/:username/mark_attendance", async (req, res) => {
     }
     else {
         try {
-            let data = await Attendance.findOne({name: username, date: new Date().toISOString().slice(0,10)})
+            let data = await Attendance.findOne({ username: name, date: new Date().toISOString().slice(0, 10) })
             res.status(200).json(data)
         }
         catch (error) {
@@ -182,13 +190,70 @@ app.post("/:username/mark_attendance", async (req, res) => {
     }
 })
 
+app.get("/:username/mark_for_friend", async (req, res) => {
+    let { username } = req.params
+    try {
+        let data = await Attendance.find({ "attendance.marked_by_others": username })
+        res.status(200).json(data)
+    }
+    catch (error) {
+        res.status(500).send({ message: "Internal servor error! Please try again." })
+    }
+})
+
+app.post("/:username/mark_for_friend", async (req, res) => {
+    let { friendName, type } = req.body
+    if (type === "search") {
+        try {
+            let data = await UserInfo.find({ username: { $regex: friendName, $options: 'i' } }).select("username branch public")
+            if (data)
+                res.status(200).json(data)
+            else
+                res.status(404).json({ message: "User not found !" })
+        }
+        catch (error) {
+            res.status(500).send({ message: "Internal servor error! Please try again." })
+        }
+    }
+    else if (type === "fetchTT") {
+        try {
+            let branchData = await UserInfo.findOne({ username: friendName }, ("branch"))
+            let data = await TT.findOne({ branch: branchData.branch })
+            res.status(200).json(data)
+        }
+        catch (error) {
+            res.status(500).send({ message: "Internal servor error! Please try again." })
+        }
+    }
+})
+
+app.get("/:username/attendance_records", async (req, res) => {
+    let { username } = req.params
+    try {
+        let data = await Attendance.find({ username }).sort({ date: -1}).limit(1)
+        if (data.length > 0) {
+            res.status(200).json(data[0])
+        }
+        else {
+            res.status(400).send({ message: "No attendance record found for this date." })
+        }
+    }
+    catch (error) {
+        res.status(500).send({ message: "Internal servor error! Please try again." })
+    }
+})
+
 app.post("/:username/attendance_records", async (req, res) => {
     let { targetDate } = req.body
     let { username } = req.params
     try {
-        let data = await Attendance.findOne({ name: username, date: targetDate })
-        if (data) res.status(200).json(data)
-        else res.status(408).json({ message: "No attendance record found for this date." })
+        let data = await Attendance.findOne({ username, date: targetDate })
+        if (data) {
+            res.status(200).json(data)
+        }
+        else {
+            res.status(408).json({ message: "No attendance record found for this date." })
+        }
     }
     catch (error) {
         res.status(500).send({ message: "Internal servor error! Please try again." })

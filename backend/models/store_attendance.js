@@ -5,7 +5,7 @@ const mongoURI = process.env.MONGODB_URI.replace("<db_name>", "attendance_ATTEND
 const Attendancedb = mongoose.createConnection(mongoURI)
 
 let AttendanceSchema = new mongoose.Schema({
-    name: {
+    username: {
         type: String,
         required: true
     },
@@ -14,7 +14,7 @@ let AttendanceSchema = new mongoose.Schema({
         required: true
     },
     date: {
-        type: String,
+        type: Date,
         default: new Date()
     },
     attendance: [
@@ -27,12 +27,12 @@ let AttendanceSchema = new mongoose.Schema({
             },
             attended: {
                 type: Boolean
+            },
+            marked_by_others: {
+                type: String
             }
         }
-    ],
-    marked_by_others: {
-        type: String
-    }
+    ]
 })
 
 let Attendance = Attendancedb.model("Attendance", AttendanceSchema)

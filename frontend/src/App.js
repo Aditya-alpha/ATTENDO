@@ -8,6 +8,7 @@ import ShowTimeTable from './timetable/view_tt';
 import UpdateTimeTable from './timetable/update_tt';
 import MarkAttendance from './attendance/mark_attendance';
 import ShowRecords from './attendance/attendance_records';
+import MarkForFriend from './attendance/mark_for_friend';
 
 export const Context = React.createContext()
 
@@ -28,6 +29,7 @@ function App() {
           <Route path='/update_time-table' element={<UpdateTimeTable />} />
           <Route path='/:username/mark_attendance' element={<MarkAttendance />} />
           <Route path='/:username/attendance_records' element={<ShowRecords />} />
+          <Route path='/:username/mark_for_friend' element={<MarkForFriend />} />
         </Routes>
       </Router>
     </Context.Provider>
