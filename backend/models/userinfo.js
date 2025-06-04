@@ -27,6 +27,10 @@ let userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    semester: {
+        type: String,
+        require: true
+    },
     public: {
         type: Boolean,
         default: false

@@ -9,6 +9,7 @@ export default function ShowTimeTable() {
 
     let [ttData, setTtData] = useState({
         branch: "",
+        semester: "",
         schedule: [{
             time: "",
             subject: ""
@@ -19,6 +20,7 @@ export default function ShowTimeTable() {
     let [attendanceData, setAttendanceData] = useState({
         name: friendName,
         branch: ttData.branch,
+        semester: ttData.semester,
         date: new Date().toISOString().slice(0, 10),
         attendance: [{
             time: "",
@@ -87,7 +89,7 @@ export default function ShowTimeTable() {
             return
         }
         let filteredAttendance = attendanceData.attendance.filter(rec => rec.subject.trim() !== "" && rec.time.trim() !== "")
-        let filteredAttendanceData = { ...attendanceData, attendance: filteredAttendance }
+        let filteredAttendanceData = { ...attendanceData, branch: ttData.branch, semester: ttData.semester, attendance: filteredAttendance }
         try {
             const response = await fetch(`http://localhost:8000/${username}/mark_attendance`, {
                 method: "POST",
@@ -145,6 +147,7 @@ export default function ShowTimeTable() {
         let newAttendanceData = {
             ...attendanceData,
             branch: ttData.branch,
+            semester: ttData.semester,
             attendance: updatedAttendance
         }
 
@@ -209,6 +212,7 @@ export default function ShowTimeTable() {
                 setAttendanceData({
                     name: user.username,
                     branch: user.branch,
+                    semester: user.semester,
                     date: new Date().toISOString().slice(0, 10),
                     attendance: schedule.map(sch => ({
                         time: sch.time,
@@ -269,6 +273,7 @@ export default function ShowTimeTable() {
                                 <p className="text-3xl font-medium" >Time-Table</p>
                                 <div className="flex gap-12 text-lg font-medium" >
                                     <button onClick={handleResetTT} className="bg-slate-700 rounded-lg px-8 py-2" >Reset Time Table</button>
+                                    <p className="bg-slate-700 rounded-lg px-10 py-2" >{ttData.semester}</p>
                                     <p className="bg-slate-700 rounded-lg px-10 py-2" >{ttData.branch}</p>
                                 </div>
                             </div>

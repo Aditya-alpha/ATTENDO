@@ -84,13 +84,15 @@ app.post("/signup/otp", async (req, res) => {
             else if (branchCode === "ec") branch = "Electronics"
             else if (branchCode === "cv") branch = "Civil"
             else if (branchCode === "pd") branch = "Production"
-            else branch = "Textile"
+            else if (branchCode === "te") branch = "Textile"
+            else branch = "Mechanical"
             await UserInfo.create({
                 username: otpdata.username,
                 email: otpdata.email,
                 password: otpdata.password,
                 profile_photo: otpdata.profile_photo,
-                branch: branch
+                branch: branch,
+                semester: "Sem 1"
             })
             await Otp.deleteOne({ email })
             res.status(200).send({ message: "Signup successful!" })
@@ -126,9 +128,9 @@ app.post("/signup/resend-otp", async (req, res) => {
 })
 
 app.post("/update_time-table", async (req, res) => {
-    let { branch, schedule } = req.body
+    let { branch, semester, schedule } = req.body
     try {
-        await TT.create({ branch, schedule })
+        await TT.create({ branch, semester, schedule })
         res.status(200).send({ message: "Time-Table saved successfully!" })
     }
     catch (error) {
@@ -137,9 +139,9 @@ app.post("/update_time-table", async (req, res) => {
 })
 
 app.post("/view_time-table", async (req, res) => {
-    let { branch } = req.body
+    let { branch, semester } = req.body
     try {
-        let data = await TT.findOne({ branch })
+        let data = await TT.findOne({ branch, semester })
         res.status(200).json(data)
     }
     catch (error) {
@@ -150,8 +152,8 @@ app.post("/view_time-table", async (req, res) => {
 app.get("/:username/mark_attendance", async (req, res) => {
     let { username } = req.params
     try {
-        let branchData = await UserInfo.findOne({ username }, ("branch"))
-        let data = await TT.findOne({ branch: branchData.branch })
+        let user = await UserInfo.findOne({ username }).select("branch semester")
+        let data = await TT.findOne({ branch: user.branch, semester: user.semester })
         res.status(200).json(data)
     }
     catch (error) {
@@ -217,8 +219,8 @@ app.post("/:username/mark_for_friend", async (req, res) => {
     }
     else if (type === "fetchTT") {
         try {
-            let branchData = await UserInfo.findOne({ username: friendName }, ("branch"))
-            let data = await TT.findOne({ branch: branchData.branch })
+            let user = await UserInfo.findOne({ username: friendName }).select("branch semester")
+            let data = await TT.findOne({ branch: user.branch, semester: user.semester })
             res.status(200).json(data)
         }
         catch (error) {
@@ -257,6 +259,29 @@ app.post("/:username/attendance_records", async (req, res) => {
     }
     catch (error) {
         res.status(500).send({ message: "Internal servor error! Please try again." })
+    }
+})
+
+app.get("/:username/profile", async (req, res) => {
+    let { username } = req.params
+    try {
+        let data = await UserInfo.findOne({ username }).select("username email profile_photo branch semester public")
+        res.status(200).json(data)
+    }
+    catch (error) {
+        res.status(500).send({ message: "Internal servor error! Please try again." })
+    }
+})
+
+app.post("/:username/profile", async (req, res) => {
+    let { username } = req.params
+    let { updatedUserInfo } = req.body
+    try {
+        let data = await UserInfo.findOneAndUpdate({ username }, { $set: updatedUserInfo }, { new: true })
+        res.status(200).json(data)
+    }
+    catch (error) {
+        res.status(500).send({ message: "Internal server error! Please try again." })
     }
 })
 

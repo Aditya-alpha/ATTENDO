@@ -11,6 +11,7 @@ export default function ShowRecords() {
     let [attendanceData, setAttendanceData] = useState({
         name: "",
         branch: "",
+        semester: "",
         date: "",
         attendance: [],
         marked_by_others: ""
@@ -78,6 +79,7 @@ export default function ShowRecords() {
             <div className="w-full flex justify-between mt-6" >
                 <p className="text-3xl font-medium" >Attendance Records</p>
                 <div className="flex gap-12 text-lg font-medium" >
+                    <p className="bg-slate-700 rounded-lg px-10 py-2" >{attendanceData?.semester}</p>
                     <p className="bg-slate-700 rounded-lg px-10 py-2" >{attendanceData?.branch}</p>
                     <input type="date" value={targetDate} onChange={(e) => handleFetchAttendanceData(e)} className="bg-slate-700 rounded-lg px-4 py-2" />
                 </div>

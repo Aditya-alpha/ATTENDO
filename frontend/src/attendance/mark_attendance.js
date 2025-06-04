@@ -11,6 +11,7 @@ export default function ShowTimeTable() {
     let navigate = useNavigate()
     let [ttData, setTtData] = useState({
         branch: "",
+        semester: "",
         schedule: [{
             time: "",
             subject: ""
@@ -20,6 +21,7 @@ export default function ShowTimeTable() {
     let [attendanceData, setAttendanceData] = useState({
         name: username,
         branch: ttData.branch,
+        semester: ttData.semester,
         date: new Date().toISOString().slice(0, 10),
         attendance: [{
             time: "",
@@ -69,7 +71,7 @@ export default function ShowTimeTable() {
                 }
                 else {
                     setAttendanceData(prev => ({
-                        ...prev, branch: ttData.branch, attendance: ttData.schedule.map(sch => ({
+                        ...prev, branch: ttData.branch, semester: ttData.semester, attendance: ttData.schedule.map(sch => ({
                             time: sch.time,
                             subject: sch.subject,
                             attended: false,
@@ -83,7 +85,7 @@ export default function ShowTimeTable() {
             }
         }
         handleFetchAttendanceData()
-    }, [username, ttData.schedule, ttData.branch, attendanceData.name])
+    }, [username, ttData.schedule, ttData.branch, ttData.semester, attendanceData.name])
 
     function handleIsAttended(i) {
         setAttendanceData(prev => {
@@ -205,6 +207,7 @@ export default function ShowTimeTable() {
                 <div className="flex gap-12 text-lg font-medium" >
                     <button onClick={handleResetTT} className="bg-slate-700 rounded-lg px-8 py-2" >Reset Time Table</button>
                     <button onClick={() => navigate(`/${username}/mark_for_friend`)} className="bg-slate-700 rounded-lg px-8 py-2" >Mark for friend</button>
+                    <p className="bg-slate-700 rounded-lg px-10 py-2" >{ttData.semester}</p>
                     <p className="bg-slate-700 rounded-lg px-10 py-2" >{ttData.branch}</p>
                 </div>
             </div>

@@ -13,6 +13,10 @@ let AttendanceSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    semester: {
+        type: String,
+        required: true
+    },
     date: {
         type: Date,
         default: new Date()

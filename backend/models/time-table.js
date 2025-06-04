@@ -9,6 +9,10 @@ let TTSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    semester: {
+        type: String,
+        required: true
+    },
     schedule: [
         {
             time: {
