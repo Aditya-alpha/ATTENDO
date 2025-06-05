@@ -2,8 +2,9 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Navbar from "../navbar/navbar"
 import default_profile_photo from "../images/default_profile.png"
-import { MdCheckBox, MdCheckBoxOutlineBlank } from "react-icons/md"
+import { MdCheckBox } from "react-icons/md"
 import { LiaEditSolid } from "react-icons/lia"
+import { RxCross2 } from "react-icons/rx"
 
 
 export default function Profile() {
@@ -20,9 +21,11 @@ export default function Profile() {
     let [branchName, setBranchName] = useState("")
     let [semesterValue, setSemesterValue] = useState("")
     let [publicStatus, setPublicStatus] = useState(false)
+    let [profilePhoto, setProfilePhoto] = useState("")
     let [isBranchEditing, setIsBranchEditing] = useState(false)
     let [isSemesterEditing, setIsSemesterEditing] = useState(false)
     let [isPublicEditing, setIsPublicEditing] = useState(false)
+    let [isProfilePhotoEditing, setIsProfilePhotoEditing] = useState(false)
 
     useEffect(() => {
         async function handleFetchUserInfo() {
@@ -66,6 +69,24 @@ export default function Profile() {
         }
     }
 
+    async function handleSaveProfilePhoto(profile_photo) {
+        let formData = new FormData()
+        formData.append("profile_photo", profile_photo)
+        try {
+            const response = await fetch(`http://localhost:8000/${username}/profile/profile_photo`, {
+                method: "POST",
+                body: formData
+            })
+            if (response.status === 200) {
+                let data = await response.json()
+                setUserInfo(data)
+            }
+        }
+        catch (error) {
+            alert("An error occurred. Please try again.")
+        }
+    }
+
     function handleEditing(name) {
         if (name === "branch") {
             let updatedUserInfo = { ...userInfo, branch: branchName }
@@ -87,13 +108,41 @@ export default function Profile() {
         }
     }
 
+    function handleProfilePhotoChange(e) {
+        let file = e.target.files[0]
+        if (file) {
+            let confirmSave = window.confirm("Do you want to change the profile photo ?")
+            if (confirmSave) {
+                setProfilePhoto(file)
+                handleSaveProfilePhoto(file)
+            }
+        }
+    }
+
+    function handleChangePassword () {
+        window.localStorage.setItem("email", userInfo.email)
+        navigate(`/${username}/profile/updatepassword`)
+    }
+
+    function handleLogout () {
+        window.localStorage.removeItem("isSignedin")
+        window.localStorage.removeItem("username")
+        navigate("/")
+    }
+
     return (
         <div className="h-full min-h-screen w-full bg-[#262523] text-white px-20 pb-12" >
             <Navbar />
             <div className="h-full w-full mt-6" >
                 <p className="text-3xl font-medium" >Profile</p>
-                <div className="h-48 w-full relative bg-slate-600 mt-4">
-                    <img src={userInfo?.profile_photo || default_profile_photo} alt="profile_photo" className="h-60 w-60 rounded-full cursor-pointer absolute top-16 left-28 p-2 bg-slate-700" />
+                <div className="h-48 w-full bg-slate-600 mt-4">
+                    <div className="group relative" >
+                        <label>
+                            <input type="file" className="hidden" onChange={(e) => handleProfilePhotoChange(e)} />
+                            <LiaEditSolid className="h-[224px] w-[224px] absolute top-[72px] left-[120px] p-24 rounded-full z-50 text-2xl opacity-0 group-hover:opacity-100 group-hover:bg-opacity-50 transition-opacity text-black bg-gray-300 cursor-pointer" />
+                        </label>
+                        <img src={userInfo?.profile_photo || default_profile_photo} alt="profile_photo" className="h-60 w-60 rounded-full absolute top-16 left-28 p-2 bg-slate-700" />
+                    </div>
                 </div>
                 <div className="bg-slate-700 py-36 pl-28 text-lg font-semibold space-y-2" >
                     <p>Username: &nbsp; {userInfo.username}</p>
@@ -112,13 +161,14 @@ export default function Profile() {
                                 <option value="Electrical" >Electrical</option>
                                 <option value="Production" >Production</option>
                             </select>
+                            <RxCross2 onClick={() => setIsBranchEditing(false)} className="bg-white text-black cursor-pointer rounded-sm" />
                             <MdCheckBox onClick={() => handleEditing("branch")} className="text-2xl cursor-pointer" />
                         </div>
                         :
                         <div className="flex gap-4 items-center" >
                             <p>Branch:</p>
                             <p>{userInfo.branch}</p>
-                            <LiaEditSolid onClick={() => setIsBranchEditing(true)} className="text-xl cursor-pointer" />
+                            <LiaEditSolid onClick={() => { setIsBranchEditing(true); setIsSemesterEditing(false); setIsPublicEditing(false) }} className="text-xl cursor-pointer" />
                         </div>
                     }
                     {isSemesterEditing ?
@@ -134,13 +184,14 @@ export default function Profile() {
                                 <option value="Sem VII" >Sem VII</option>
                                 <option value="Sem VIII" >Sem VIII</option>
                             </select>
+                            <RxCross2 onClick={() => setIsSemesterEditing(false)} className="bg-white text-black cursor-pointer rounded-sm" />
                             <MdCheckBox onClick={() => handleEditing("semester")} className="text-2xl cursor-pointer" />
                         </div>
                         :
                         <div className="flex gap-4 items-center" >
                             <p>Semester:</p>
                             <p>{userInfo.semester}</p>
-                            <LiaEditSolid onClick={() => setIsSemesterEditing(true)} className="text-xl cursor-pointer" />
+                            <LiaEditSolid onClick={() => { setIsSemesterEditing(true); setIsBranchEditing(false); setIsPublicEditing(false) }} className="text-xl cursor-pointer" />
                         </div>
                     }
                     {isPublicEditing ?
@@ -150,15 +201,18 @@ export default function Profile() {
                                 <option value={false} >Private</option>
                                 <option value={true} >Public</option>
                             </select>
+                            <RxCross2 onClick={() => setIsPublicEditing(false)} className="bg-white text-black cursor-pointer rounded-sm" />
                             <MdCheckBox onClick={() => handleEditing("public")} className="text-2xl cursor-pointer" />
                         </div>
                         :
                         <div className="flex gap-4 items-center" >
                             <p>Profile:</p>
                             <p>{userInfo.public ? "Public" : "Private"}</p>
-                            <LiaEditSolid onClick={() => setIsPublicEditing(true)} className="text-xl cursor-pointer" />
+                            <LiaEditSolid onClick={() => { setIsPublicEditing(true); setIsSemesterEditing(false); setIsBranchEditing(false) }} className="text-xl cursor-pointer" />
                         </div>
                     }
+                    <div onClick={handleChangePassword} >Change Password</div>
+                    <div onClick={handleLogout} className="text-red-500 cursor-pointer" >Log out</div>
                 </div>
             </div>
         </div>

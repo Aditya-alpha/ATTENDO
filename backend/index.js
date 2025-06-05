@@ -7,6 +7,9 @@ const TT = require("./models/time-table")
 const Attendance = require("./models/store_attendance")
 const bcrypt = require('bcrypt')
 require("dotenv").config()
+const multer = require('multer')
+const cloudinary = require("./uploadProfilePhoto")
+const { CloudinaryStorage } = require('multer-storage-cloudinary')
 
 const app = express()
 
@@ -17,6 +20,17 @@ const corsOptions = {
 }
 
 const PORT = process.env.PORT || 3000
+
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'posts',
+        allowedFormats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'mov', 'avi', 'mkv', 'webm', 'pdf', 'zip', 'txt'],
+        resource_type: 'auto'
+    },
+});
+
+const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 * 1024 } })
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
@@ -41,6 +55,55 @@ app.post("/login", async (req, res) => {
     }
     catch (error) {
         res.status(500).send({ message: "Internal server error" })
+    }
+})
+
+app.post("/login/forgotpassword", async (req, res) => {
+    let { email } = req.body
+    try {
+        let otpsent = Math.floor(100000 + Math.random() * 900000)
+        await sendEmail(email, otpsent)
+        await Otp.findOneAndUpdate({ email: email }, { email: email, otp: otpsent }, { upsert: true, new: true })
+        res.status(200).send("Email sent")
+    }
+    catch (error) {
+        res.status(500).send({ message: "Internal server error" })
+    }
+})
+
+app.post("/login/forgotpassword/verify", async (req, res) => {
+    let { email, enteredotp } = req.body
+    try {
+        let otpdata = await Otp.findOne({ email: email })
+        if (otpdata.otp === parseInt(enteredotp)) {
+            await Otp.deleteOne({ email })
+            res.status(200).send("Otp verified")
+        }
+        else {
+            res.status(403).send("Incorrect OTP")
+        }
+    }
+    catch (error) {
+        res.send("Internal server error")
+    }
+})
+
+app.post("/login/updatepassword", async (req, res) => {
+    const newPassword = req.body.newPassword
+    const email = req.body.email
+    try {
+        let userData = await UserInfo.findOne({ email: email })
+        if (userData) {
+            const hashedPassword = await bcrypt.hash(newPassword, 10)
+            await UserInfo.findOneAndUpdate({ email: email }, { $set: { password: hashedPassword } }, { new: true })
+            res.status(200).send("Password updated successfully")
+        }
+        else {
+            res.status(403).send("User not found")
+        }
+    }
+    catch (error) {
+        res.send("Internal server error")
     }
 })
 
@@ -277,11 +340,46 @@ app.post("/:username/profile", async (req, res) => {
     let { username } = req.params
     let { updatedUserInfo } = req.body
     try {
-        let data = await UserInfo.findOneAndUpdate({ username }, { $set: updatedUserInfo }, { new: true })
+        let data = await UserInfo.findOneAndUpdate({ username }, { $set: updatedUserInfo }, { new: true }).select("username email profile_photo branch semester public")
         res.status(200).json(data)
     }
     catch (error) {
         res.status(500).send({ message: "Internal server error! Please try again." })
+    }
+})
+
+app.post("/:username/profile/profile_photo", upload.single("profile_photo"), async (req, res) => {
+    let { username } = req.params
+    let profile_photo = req.file.path
+    try {
+        let data = await UserInfo.findOneAndUpdate({ username }, { profile_photo }, { new: true }).select("username email profile_photo branch semester public")
+        res.status(200).send(data)
+    }
+    catch (error) {
+        res.status(500).send({ message: "Internal server error" })
+    }
+})
+
+app.post("/:username/profile/updatepassword", async (req, res) => {
+    let { username } = req.params
+    let oldpassword = req.body.oldPassword
+    let newpassword = req.body.newPassword
+    try {
+        let userData = await UserInfo.findOne({ username: username })
+        if (!userData) {
+            return res.status(404).send({ message: "User not found." });
+        }
+        const isPasswordValid = await bcrypt.compare(oldpassword, userData.password);
+        if (!isPasswordValid) {
+            return res.status(403).send({ message: "Old password is incorrect." });
+        }
+        const hashedNewPassword = await bcrypt.hash(newpassword, 10)
+        await UserInfo.findOneAndUpdate({ username: username }, { password: hashedNewPassword }, { new: true })
+        res.status(200).send({ message: "Password updated successfully." })
+
+    }
+    catch (error) {
+        res.status(500).send({ message: "Internal server error. Please try again later." })
     }
 })
 
