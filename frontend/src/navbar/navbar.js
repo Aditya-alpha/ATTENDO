@@ -11,7 +11,7 @@ export default function Navbar() {
 
     useEffect(() => {
         setIsSignedin(window.localStorage.getItem("isSignedin"))
-    }, [])
+    }, [setIsSignedin])
 
     return (
         <div className="w-full flex justify-between text-lg font-semibold py-5" >
@@ -28,6 +28,7 @@ export default function Navbar() {
                         <button onClick={() => navigate("/view_time-table")} >View TT</button>
                         <button onClick={() => navigate(`/${username}/mark_attendance`)} >Mark</button>
                         <button onClick={() => navigate(`/${username}/attendance_records`)} >See Records</button>
+                        <button onClick={() => navigate(`/${username}/attendance_analysis`)} >Analysis</button>
                         <button onClick={() => navigate(`/${username}/profile`)} >Profile</button>
                     </div>
                     :

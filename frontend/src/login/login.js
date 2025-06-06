@@ -75,14 +75,14 @@ export default function Login() {
 
     return (
         <div className="h-screen w-full flex justify-center items-center bg-[#262523] text-white">
-            <div className="h-[480px] w-[420px] rounded-lg py-4 px-5 bg-[#0e0e0e] opacity-90 shadow-2xl hover:scale-105 transition-all duration-300 max-sm:mx-4">
+            <div className="h-[480px] w-[420px] rounded-lg py-4 px-5 bg-slate-700 opacity-90 shadow-2xl hover:scale-105 transition-all duration-300 max-sm:mx-4">
                 <div className="flex justify-between">
                     <p className="font-medium text-3xl">Log in</p>
                     <RxCross2 onClick={() => navigate("/")} className="text-3xl mt-1 -mr-1 cursor-pointer hover:scale-125 transition-all duration-300" />
                 </div>
                 <form method="post" action="/login" className="mt-6">
-                    <input type="text" name="email" value={userInfo.email} onChange={handleInputChange} placeholder="Email" className="block h-12 w-full px-3 rounded-md mt-8 text-black" />
-                    <input type="password" name="password" value={userInfo.password} onChange={handleInputChange} placeholder="Password" className="block h-12 w-full px-3 rounded-md mt-8 text-black" />
+                    <input type="text" name="email" value={userInfo.email} onChange={handleInputChange} placeholder="Email" className="block h-12 w-full px-3 rounded-md mt-8 text-black outline-none" />
+                    <input type="password" name="password" value={userInfo.password} onChange={handleInputChange} placeholder="Password" className="block h-12 w-full px-3 rounded-md mt-8 text-black outline-none" />
                     <div className="flex mt-4 font-medium justify-between" >
                         <p onClick={handleForgotPassword} className="cursor-pointer hover:underline">Forgot password?</p>
                         <p onClick={() => navigate("/signup")} className="cursor-pointer hover:underline" >New User?&nbsp; Sign up!</p>

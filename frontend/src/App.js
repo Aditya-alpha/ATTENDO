@@ -17,6 +17,7 @@ import UpdatePassword from './profile/profile-up';
 import ForgotProfilePassword from './profile/profile-fp';
 import VerifyProfileOtp from './profile/profile-vp'
 import ChangeProfilePassword from './profile/profile-cp';
+import ShowAnalysis from './attendance/attendance_analysis';
 
 export const Context = React.createContext()
 
@@ -41,6 +42,7 @@ function App() {
           <Route path='/:username/mark_attendance' element={<MarkAttendance />} />
           <Route path='/:username/attendance_records' element={<ShowRecords />} />
           <Route path='/:username/mark_for_friend' element={<MarkForFriend />} />
+          <Route path='/:username/attendance_analysis' element={<ShowAnalysis />} />
           <Route path='/:username/profile' element={<Profile />} />
           <Route path='/:username/profile/updatepassword' element={<UpdatePassword />} />
           <Route path='/:username/profile/forgotpassword' element={<ForgotProfilePassword />} />

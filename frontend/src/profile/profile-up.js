@@ -51,21 +51,22 @@ export default function UpdatePassword() {
     }
 
     function handleCross() {
+        window.localStorage.removeItem("email")
         navigate(`/${username}/profile`)
     }
 
     return (
-        <div className="flex justify-center items-center h-screen w-full bg-[#1db1ff]">
-            <div className="h-[440px] w-[420px] rounded-lg py-4 px-5 bg-sky-300 shadow-2xl hover:scale-105 transition-all duration-300 max-sm:mx-4">
-                <div className="flex justify-between">
+        <div className="flex justify-center items-center h-screen w-full bg-[#262523]">
+            <div className="h-[440px] w-[420px] rounded-lg py-4 px-5 bg-slate-700 shadow-2xl hover:scale-105 transition-all duration-300 max-sm:mx-4">
+                <div className="flex justify-between text-white">
                     <p className="font-medium text-3xl">Change Password</p>
                     <RxCross2 onClick={handleCross} className="text-3xl mt-1 -mr-1 cursor-pointer hover:scale-125 transition-all duration-300" />
                 </div>
-                <form className="mt-6">
+                <form className="mt-6 font-medium">
                     <input autoFocus type="password" name="oldPassword" placeholder="Old password" value={passwordData.oldPassword} onChange={setData} className="block h-12 w-full px-3 rounded-md placeholder:text-black placeholder:opacity-70 border-2 border-black mt-8 outline-none" />
                     <input type="password" name="newPassword" placeholder="New password" value={passwordData.newPassword} onChange={setData} className="block h-12 w-full px-3 rounded-md placeholder:text-black placeholder:opacity-70 border-2 border-black mt-8 outline-none" />
                     <input type="password" name="confirmNewPassword" placeholder="Confirm new password" value={passwordData.confirmNewPassword} onChange={setData} className="block h-12 w-full px-3 rounded-md placeholder:text-black placeholder:opacity-70 border-2 border-black mt-8 outline-none" />
-                    <p onClick={() => navigate(`/${username}/profile/forgotpassword`)} className="mt-4 font-medium cursor-pointer w-36">Forgot password?</p>
+                    <p onClick={() => navigate(`/${username}/profile/forgotpassword`)} className="mt-4 font-medium text-white cursor-pointer w-36">Forgot password?</p>
                     <button onClick={updatePassword} className="h-12 w-full mt-6 hover:text-2xl transition-all duration-200 rounded-full bg-white text-black text-xl font-semibold border-2 border-black" >Update Password</button>
                 </form>
             </div>

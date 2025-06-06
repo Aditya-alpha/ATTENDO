@@ -36,12 +36,11 @@ export default function ShowRecords() {
                 }
             }
             catch (error) {
-                console.log(error)
                 alert("An error occurred. Please try again.")
             }
         }
         handleFetchLastDate()
-    }, [username])
+    }, [username, navigate])
 
     async function handleFetchAttendanceData(e) {
         let value = e.target.value

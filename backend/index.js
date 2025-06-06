@@ -325,6 +325,18 @@ app.post("/:username/attendance_records", async (req, res) => {
     }
 })
 
+app.get("/:username/attendance_analysis", async (req, res) => {
+    let { username } = req.params
+    try {
+        let user = await UserInfo.findOne({ username }).select("branch semester")
+        let data = await Attendance.find({ username, branch: user.branch, semester: user.semester })
+        res.status(200).json(data)
+    }
+    catch (error) {
+        res.status(500).send({ message: "Internal servor error! Please try again." })
+    }
+})
+
 app.get("/:username/profile", async (req, res) => {
     let { username } = req.params
     try {

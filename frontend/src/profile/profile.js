@@ -21,11 +21,9 @@ export default function Profile() {
     let [branchName, setBranchName] = useState("")
     let [semesterValue, setSemesterValue] = useState("")
     let [publicStatus, setPublicStatus] = useState(false)
-    let [profilePhoto, setProfilePhoto] = useState("")
     let [isBranchEditing, setIsBranchEditing] = useState(false)
     let [isSemesterEditing, setIsSemesterEditing] = useState(false)
     let [isPublicEditing, setIsPublicEditing] = useState(false)
-    let [isProfilePhotoEditing, setIsProfilePhotoEditing] = useState(false)
 
     useEffect(() => {
         async function handleFetchUserInfo() {
@@ -113,18 +111,17 @@ export default function Profile() {
         if (file) {
             let confirmSave = window.confirm("Do you want to change the profile photo ?")
             if (confirmSave) {
-                setProfilePhoto(file)
                 handleSaveProfilePhoto(file)
             }
         }
     }
 
-    function handleChangePassword () {
+    function handleChangePassword() {
         window.localStorage.setItem("email", userInfo.email)
         navigate(`/${username}/profile/updatepassword`)
     }
 
-    function handleLogout () {
+    function handleLogout() {
         window.localStorage.removeItem("isSignedin")
         window.localStorage.removeItem("username")
         navigate("/")
@@ -137,14 +134,14 @@ export default function Profile() {
                 <p className="text-3xl font-medium" >Profile</p>
                 <div className="h-48 w-full bg-slate-600 mt-4">
                     <div className="group relative" >
+                        <img src={userInfo?.profile_photo || default_profile_photo} alt="profile_photo" className="h-60 w-60 rounded-full absolute top-16 left-28 p-2 bg-slate-700" />
                         <label>
                             <input type="file" className="hidden" onChange={(e) => handleProfilePhotoChange(e)} />
-                            <LiaEditSolid className="h-[224px] w-[224px] absolute top-[72px] left-[120px] p-24 rounded-full z-50 text-2xl opacity-0 group-hover:opacity-100 group-hover:bg-opacity-50 transition-opacity text-black bg-gray-300 cursor-pointer" />
+                            <LiaEditSolid className="h-[224px] w-[224px] absolute top-[72px] left-[120px] p-24 rounded-full z-50 text-2xl opacity-0 group-hover:opacity-100 group-hover:bg-opacity-50 transition-opacity duration-200 text-black bg-gray-300 cursor-pointer" />
                         </label>
-                        <img src={userInfo?.profile_photo || default_profile_photo} alt="profile_photo" className="h-60 w-60 rounded-full absolute top-16 left-28 p-2 bg-slate-700" />
                     </div>
                 </div>
-                <div className="bg-slate-700 py-36 pl-28 text-lg font-semibold space-y-2" >
+                <div className="bg-slate-700 py-36 pl-28 text-lg font-semibold flex flex-col gap-3 items-start" >
                     <p>Username: &nbsp; {userInfo.username}</p>
                     <p>Email: &nbsp; {userInfo.email}</p>
                     {isBranchEditing ?
@@ -211,8 +208,10 @@ export default function Profile() {
                             <LiaEditSolid onClick={() => { setIsPublicEditing(true); setIsSemesterEditing(false); setIsBranchEditing(false) }} className="text-xl cursor-pointer" />
                         </div>
                     }
-                    <div onClick={handleChangePassword} >Change Password</div>
-                    <div onClick={handleLogout} className="text-red-500 cursor-pointer" >Log out</div>
+                    <div className="flex flex-col gap-5" >
+                        <button onClick={handleChangePassword} className="bg-slate-500 px-3 py-1 rounded-lg hover:bg-slate-600 transition-all duration-200 cursor-pointer" >Change Password</button>
+                        <button onClick={handleLogout} className="bg-red-500 px-3 py-1 rounded-lg hover:bg-red-700 transition-all duration-200 cursor-pointer" >Log out</button>
+                    </div>
                 </div>
             </div>
         </div>

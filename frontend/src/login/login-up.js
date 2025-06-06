@@ -2,11 +2,10 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { RxCross2 } from "react-icons/rx"
 
-export default function ChangeProfilePassword() {
+export default function ChangePassword() {
 
     let navigate = useNavigate()
 
-    let username = window.localStorage.getItem("username")
     let email = window.localStorage.getItem("email")
 
     let [passwordData, setPasswordData] = useState({
@@ -21,7 +20,8 @@ export default function ChangeProfilePassword() {
     }
 
     function handleCross() {
-        navigate(`/${username}/profile/updatepassword`)
+        window.localStorage.removeItem("email")
+        navigate(`/login`)
         alert("Password not changed.")
     }
 
@@ -44,8 +44,9 @@ export default function ChangeProfilePassword() {
                 body: JSON.stringify({newPassword: passwordData.newPassword, email: email})
             })
             if (response.status === 200) {
-                alert("Password updated successfully !")
-                navigate(`/${username}/profile`)
+                window.localStorage.removeItem("email")
+                alert("Password updated successfully !  Now you can login using new password.")
+                navigate(`/login`)
             }
             else {
                 alert("Internal server error.")
@@ -57,9 +58,9 @@ export default function ChangeProfilePassword() {
     }
 
     return (
-        <div className="flex justify-center items-center h-screen w-full bg-[#1db1ff]">
-            <div className="h-80 w-[420px] rounded-lg py-4 px-5 bg-sky-300 shadow-2xl hover:scale-105 transition-all duration-300 max-sm:mx-4">
-                <div className="flex justify-between">
+        <div className="flex justify-center items-center h-screen w-full bg-[#262523]">
+            <div className="h-80 w-[420px] rounded-lg py-4 px-5 bg-slate-700 shadow-2xl hover:scale-105 transition-all duration-300 max-sm:mx-4">
+                <div className="flex justify-between text-white">
                     <p className="font-medium text-3xl">Change Password</p>
                     <RxCross2 onClick={handleCross} className="text-3xl mt-1 -mr-1 cursor-pointer hover:scale-125 transition-all duration-300" />
                 </div>
