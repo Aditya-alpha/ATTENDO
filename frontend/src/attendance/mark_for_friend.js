@@ -56,10 +56,10 @@ export default function ShowTimeTable() {
     }, [username])
 
 
-    function handleIsAttended(i) {
+    function handleIsAttended(i, value) {
         setAttendanceData(prev => {
             let newAttendance = [...prev.attendance]
-            newAttendance[i] = { ...newAttendance[i], attended: !newAttendance[i].attended, marked_by_others: username }
+            newAttendance[i] = { ...newAttendance[i], attended: value, marked_by_others: username }
             return { ...prev, attendance: newAttendance }
         })
     }
@@ -96,7 +96,7 @@ export default function ShowTimeTable() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ attendanceData: filteredAttendanceData, name: friendName, type: name === "reset" ? "reset" : "create" })
+                body: JSON.stringify({ attendanceData: filteredAttendanceData, name: friendName, date: attendanceData.date, type: name === "reset" ? "reset" : "create" })
             })
             if (response.ok) {
                 let data = await response.json()
@@ -141,7 +141,7 @@ export default function ShowTimeTable() {
         let updatedAttendance = ttData.schedule.map(sch => ({
             time: sch.time,
             subject: sch.subject,
-            attended: false
+            attended: null
         }))
 
         let newAttendanceData = {
@@ -195,14 +195,14 @@ export default function ShowTimeTable() {
         }
     }
 
-    async function handleFetchAttendanceData(user, schedule) {
+    async function handleFetchAttendanceData(user, schedule, date) {
         try {
             const response = await fetch(`http://localhost:8000/${username}/mark_attendance`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ name: user.username, type: "show" })
+                body: JSON.stringify({ name: user.username, date, type: "show" })
             })
             let data = await response.json()
             if (data) {
@@ -217,7 +217,7 @@ export default function ShowTimeTable() {
                     attendance: schedule.map(sch => ({
                         time: sch.time,
                         subject: sch.subject,
-                        attended: false,
+                        attended: null,
                         marked_by_others: ""
                     }))
                 })
@@ -242,7 +242,7 @@ export default function ShowTimeTable() {
                 setTtData(data)
                 setIsSubjectEditing(() => data.schedule.map(() => false))
                 setIsTimeEditing(() => data.schedule.map(() => false))
-                handleFetchAttendanceData(user, data.schedule)
+                handleFetchAttendanceData(user, data.schedule, attendanceData.date)
                 setSearchedUsers([])
                 setSearchFriend("")
             }
@@ -263,7 +263,7 @@ export default function ShowTimeTable() {
     }
 
     return (
-        <div className="h-full min-h-screen w-full bg-[#262523] text-white px-20 pb-12" >
+        <div className="h-full min-h-screen w-full bg-gray-900 text-white px-20 pb-12" >
             <Navbar />
             <div className="h-full flex gap-10" >
                 <div className="w-4/5" >
@@ -271,24 +271,24 @@ export default function ShowTimeTable() {
                         <>
                             <div className="w-full flex justify-between mt-6" >
                                 <p className="text-3xl font-medium" >Time-Table</p>
-                                <div className="flex gap-12 text-lg font-medium" >
-                                    <button onClick={handleResetTT} className="bg-slate-700 rounded-lg px-8 py-2" >Reset Time Table</button>
-                                    <p className="bg-slate-700 rounded-lg px-10 py-2" >{ttData.semester}</p>
-                                    <p className="bg-slate-700 rounded-lg px-10 py-2" >{ttData.branch}</p>
+                                <div className="flex gap-12 items-center font-bold" >
+                                    <button onClick={handleResetTT} className="bg-red-600 hover:bg-red-700 transition rounded-md px-6 py-2" >Reset Time Table</button>
+                                    <p className="bg-gray-800 border-[1px] border-gray-500 rounded-md px-8 py-2" >{ttData.semester}</p>
+                                    <p className="bg-gray-800 border-[1px] border-gray-500 rounded-md px-6 py-2" >{ttData.branch}</p>
                                 </div>
                             </div>
                             <div className="my-12 flex flex-col gap-8" >
-                                <div className="flex gap-28 text-xl font-medium" >
-                                    <p className="w-1/3" >Timings</p>
-                                    <p className="w-1/2" >Subjects</p>
-                                    <p className="w-1/4" >Status</p>
+                                <div className="flex gap-6 text-xl font-medium" >
+                                    <p className="w-1/5" >Timings</p>
+                                    <p className="w-1/3" >Subjects</p>
+                                    <p className="w-2/5" >Status</p>
                                 </div>
                                 {attendanceData.attendance.map((sch, i) => (
-                                    <div key={i} className="flex gap-28 text-lg font-medium" >
-                                        <div className="w-1/3 bg-slate-700 rounded-lg px-4 py-1" >
+                                    <div key={i} className="flex gap-6 text-md font-medium" >
+                                        <div className={`w-1/5 bg-gray-800 ${!isTimeEditing[i] && "hover:bg-gray-800/50"} rounded-lg px-4 py-2 border-[1px] border-gray-500`} >
                                             {isTimeEditing[i] ?
                                                 <div className="flex justify-between" >
-                                                    <input value={newTiming} onChange={(e) => setNewTiming(e.target.value)} autoFocus className="w-full bg-slate-700 outline-none pr-6" />
+                                                    <input value={newTiming} onChange={(e) => setNewTiming(e.target.value)} autoFocus className="w-full bg-gray-800 outline-none pr-6" />
                                                     <MdDone onClick={() => { handleEditing("time", i); handleSaveTimeEdit(i) }} className="text-2xl mt-1 cursor-pointer" />
                                                 </div>
                                                 :
@@ -298,10 +298,10 @@ export default function ShowTimeTable() {
                                                 </div>
                                             }
                                         </div>
-                                        <div className="w-1/2 bg-slate-700 rounded-lg px-4 py-1" >
+                                        <div className={`w-1/3 bg-gray-800 ${!isSubjectEditing[i] && "hover:bg-gray-800/50"} rounded-lg px-4 py-2 border-[1px] border-gray-500`} >
                                             {isSubjectEditing[i] ?
                                                 <div className="flex justify-between" >
-                                                    <input value={subjectName} onChange={(e) => setSubjectName(e.target.value)} autoFocus placeholder="Enter subject name" className="w-full bg-slate-700 outline-none pr-6" />
+                                                    <input value={subjectName} onChange={(e) => setSubjectName(e.target.value)} autoFocus placeholder="Enter subject name" className="w-full bg-gray-800 outline-none pr-6" />
                                                     <MdDone onClick={() => { handleEditing("subject", i); handleSaveSubjectEdit(i) }} className="text-2xl mt-1 cursor-pointer" />
                                                 </div>
                                                 :
@@ -311,12 +311,31 @@ export default function ShowTimeTable() {
                                                 </div>
                                             }
                                         </div>
-                                        <p onClick={() => handleIsAttended(i)} className="w-1/4 bg-slate-700 rounded-lg px-4 py-1 flex justify-between cursor-pointer" >Attended: {attendanceData.attendance[i]?.attended ? <MdCheckBox className="text-2xl mt-[3px]" /> : <MdCheckBoxOutlineBlank className="text-2xl mt-[3px]" />}</p>
+                                        <div className="w-2/5 bg-gray-800 hover:bg-gray-800/50 rounded-lg px-4 py-2 flex justify-between gap-6 border-[1px] border-gray-500">
+                                            <div
+                                                onClick={() => handleIsAttended(i, true)}
+                                                className={`flex items-center gap-2 cursor-pointer ${sch.attended === true ? "text-green-400" : "text-white"}`} >
+                                                {sch.attended === true ? <MdCheckBox className="text-2xl" /> : <MdCheckBoxOutlineBlank className="text-2xl" />}
+                                                <p>Attended</p>
+                                            </div>
+                                            <div
+                                                onClick={() => handleIsAttended(i, false)}
+                                                className={`flex items-center gap-2 cursor-pointer ${sch.attended === false ? "text-red-400" : "text-white"}`} >
+                                                {sch.attended === false ? <MdCheckBox className="text-2xl" /> : <MdCheckBoxOutlineBlank className="text-2xl" />}
+                                                <p>Not Attended</p>
+                                            </div>
+                                            <div
+                                                onClick={() => handleIsAttended(i, null)}
+                                                className={`flex items-center gap-2 cursor-pointer ${sch.attended === null ? "text-yellow-400" : "text-white"}`} >
+                                                {sch.attended === null ? <MdCheckBox className="text-2xl" /> : <MdCheckBoxOutlineBlank className="text-2xl" />}
+                                                <p>Cancelled</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 ))}
                                 <div className="flex self-center mt-2 font-medium text-lg gap-10 ml-16" >
-                                    <button onClick={handleAddExtra} className="w-36 bg-slate-700 p-2 rounded-lg flex gap-2" ><IoMdAdd className="text-3xl" />Add Extra</button>
-                                    <button onClick={() => handleSaveChanges(attendanceData)} className="w-36 bg-slate-700 p-2 rounded-lg" >Save Changes</button>
+                                    <button onClick={handleAddExtra} className="w-36 bg-blue-600 hover:bg-blue-700 transition p-2 rounded-lg flex gap-2" ><IoMdAdd className="text-3xl" />Add Extra</button>
+                                    <button onClick={() => handleSaveChanges(attendanceData)} className="w-36 bg-green-600 hover:bg-green-700 transition p-2 rounded-lg" >Save Changes</button>
                                 </div>
                             </div>
                         </>
@@ -331,19 +350,19 @@ export default function ShowTimeTable() {
                         </div>
                     }
                 </div>
-                <div className="w-1/5 h-full bg-slate-700 rounded-lg px-4 py-6 mt-6 font-medium" >
+                <div className="w-1/5 h-full bg-gray-800 rounded-lg px-4 py-6 mt-6 font-medium border-[1px] border-gray-500" >
                     <input value={searchFriend} autoFocus placeholder="Search friends" onChange={(e) => handleFetchUsers(e)} className="w-full rounded-md px-2 py-1 text-black outline-none" />
-                    <div className="mt-4 flex flex-col gap-4 text-lg bg-slate-500 px-2 rounded-md" >
+                    <div className="mt-4 flex flex-col gap-4 text-lg bg-gray-700 px-2 rounded-md border-[1px] border-gray-500" >
                         {searchedUsers.map((user, i) =>
                             user.username !== username &&
                             <div key={i} className="flex justify-between" >
                                 <p>{user.username}</p>
-                                <p onClick={() => handleSelectFriend(user)} className="text-xs rounded-md bg-slate-700 flex items-center px-2 my-1 cursor-pointer" >Mark</p>
+                                <p onClick={() => handleSelectFriend(user)} className="text-xs rounded-md bg-gray-800 flex items-center px-2 my-1 cursor-pointer" >Mark</p>
                             </div>
                         )}
                     </div>
                     {friendName !== "" &&
-                        <div className="w-full mt-4 flex gap-2 bg-slate-500 rounded-lg px-2 py-1" >
+                        <div className="w-full mt-4 flex gap-2 bg-gray-700 rounded-lg px-2 py-1 border-[1px] border-gray-500" >
                             <p>Marking for:</p>
                             <p>{friendName}</p>
                         </div>
@@ -351,11 +370,11 @@ export default function ShowTimeTable() {
                     {markedFriends.length > 0 &&
                         <p className="mt-6" >My Friends</p>
                     }
-                    <div className="mt-3 flex flex-col gap-4 text-lg bg-slate-500 px-2 rounded-md" >
+                    <div className="mt-3 flex flex-col gap-4 text-lg bg-gray-700 px-2 rounded-md border-[1px] border-gray-500" >
                         {markedFriends.length > 0 && markedFriends.map((friend, i) =>
                             <div key={i} className="flex justify-between" >
                                 <p>{friend.username}</p>
-                                <p onClick={() => handleSelectFriend(friend)} className="text-xs rounded-md bg-slate-700 flex items-center px-2 my-1 cursor-pointer" >Mark</p>
+                                <p onClick={() => handleSelectFriend(friend)} className="text-xs rounded-md bg-gray-800 flex items-center px-2 my-1 cursor-pointer" >Mark</p>
                             </div>
                         )}
                     </div>

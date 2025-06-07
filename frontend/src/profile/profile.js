@@ -128,20 +128,20 @@ export default function Profile() {
     }
 
     return (
-        <div className="h-full min-h-screen w-full bg-[#262523] text-white px-20 pb-12" >
+        <div className="h-full min-h-screen w-full bg-gray-900 text-white px-20 pb-12" >
             <Navbar />
             <div className="h-full w-full mt-6" >
                 <p className="text-3xl font-medium" >Profile</p>
-                <div className="h-48 w-full bg-slate-600 mt-4">
+                <div className="h-48 w-full bg-gray-700 mt-4">
                     <div className="group relative" >
-                        <img src={userInfo?.profile_photo || default_profile_photo} alt="profile_photo" className="h-60 w-60 rounded-full absolute top-16 left-28 p-2 bg-slate-700" />
+                        <img src={userInfo?.profile_photo || default_profile_photo} alt="profile_photo" className="h-60 w-60 rounded-full absolute top-16 left-28 p-2 bg-gray-800" />
                         <label>
                             <input type="file" className="hidden" onChange={(e) => handleProfilePhotoChange(e)} />
                             <LiaEditSolid className="h-[224px] w-[224px] absolute top-[72px] left-[120px] p-24 rounded-full z-50 text-2xl opacity-0 group-hover:opacity-100 group-hover:bg-opacity-50 transition-opacity duration-200 text-black bg-gray-300 cursor-pointer" />
                         </label>
                     </div>
                 </div>
-                <div className="bg-slate-700 py-36 pl-28 text-lg font-semibold flex flex-col gap-3 items-start" >
+                <div className="bg-gray-800 py-36 pl-28 text-lg font-semibold flex flex-col gap-3 items-start" >
                     <p>Username: &nbsp; {userInfo.username}</p>
                     <p>Email: &nbsp; {userInfo.email}</p>
                     {isBranchEditing ?
@@ -209,7 +209,7 @@ export default function Profile() {
                         </div>
                     }
                     <div className="flex flex-col gap-5" >
-                        <button onClick={handleChangePassword} className="bg-slate-500 px-3 py-1 rounded-lg hover:bg-slate-600 transition-all duration-200 cursor-pointer" >Change Password</button>
+                        <button onClick={handleChangePassword} className="bg-gray-700 px-3 py-1 rounded-lg hover:bg-gray-900 transition-all duration-200 cursor-pointer" >Change Password</button>
                         <button onClick={handleLogout} className="bg-red-500 px-3 py-1 rounded-lg hover:bg-red-700 transition-all duration-200 cursor-pointer" >Log out</button>
                     </div>
                 </div>

@@ -14,7 +14,7 @@ export default function Navbar() {
     }, [setIsSignedin])
 
     return (
-        <div className="w-full flex justify-between text-lg font-semibold py-5" >
+        <div className="w-full t-2 flex justify-between text-lg font-semibold py-6" >
             <p>Attendo</p>
             <div className="flex gap-12" >
                 <button onClick={() => navigate("/")} >Home</button>

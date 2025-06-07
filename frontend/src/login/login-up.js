@@ -58,8 +58,8 @@ export default function ChangePassword() {
     }
 
     return (
-        <div className="flex justify-center items-center h-screen w-full bg-[#262523]">
-            <div className="h-80 w-[420px] rounded-lg py-4 px-5 bg-slate-700 shadow-2xl hover:scale-105 transition-all duration-300 max-sm:mx-4">
+        <div className="flex justify-center items-center h-screen w-full bg-gray-900">
+            <div className="h-80 w-[420px] rounded-lg py-4 px-5 bg-gray-700/70 shadow-2xl hover:scale-105 transition-all duration-300 max-sm:mx-4">
                 <div className="flex justify-between text-white">
                     <p className="font-medium text-3xl">Change Password</p>
                     <RxCross2 onClick={handleCross} className="text-3xl mt-1 -mr-1 cursor-pointer hover:scale-125 transition-all duration-300" />

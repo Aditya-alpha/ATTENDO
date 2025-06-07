@@ -18,15 +18,16 @@ export default function ShowTimeTable() {
         }]
     })
     let username = window.localStorage.getItem("username")
+    let [targetDate, setTargetDate] = useState(new Date().toISOString().slice(0, 10))
     let [attendanceData, setAttendanceData] = useState({
         name: username,
         branch: ttData.branch,
         semester: ttData.semester,
-        date: new Date().toISOString().slice(0, 10),
+        date: targetDate,
         attendance: [{
             time: "",
             subject: "",
-            attended: false,
+            attended: null,
             marked_by_others: ""
         }]
     })
@@ -55,42 +56,51 @@ export default function ShowTimeTable() {
         handleFetchTTData()
     }, [username])
 
-    useEffect(() => {
-        async function handleFetchAttendanceData() {
-            try {
-                const response = await fetch(`http://localhost:8000/${username}/mark_attendance`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ name: username, type: "show" })
-                })
+    async function handleFetchAttendanceData() {
+        try {
+            const response = await fetch(`http://localhost:8000/${username}/mark_attendance`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ name: username, date: targetDate, type: "show" })
+            })
+            if (response.ok) {
                 let data = await response.json()
                 if (data) {
                     setAttendanceData(data)
                 }
-                else {
-                    setAttendanceData(prev => ({
-                        ...prev, branch: ttData.branch, semester: ttData.semester, attendance: ttData.schedule.map(sch => ({
-                            time: sch.time,
-                            subject: sch.subject,
-                            attended: false,
-                            marked_by_others: ""
-                        }))
-                    }))
-                }
             }
-            catch (error) {
-                alert("An error occurred. Please try again.")
+            else {
+                alert ("No record found but you can mark the attendance.")
+                setAttendanceData({
+                    branch: ttData.branch,
+                    semester: ttData.semester,
+                    date: targetDate,
+                    attendance: ttData.schedule.map(sch => ({
+                        time: sch.time,
+                        subject: sch.subject,
+                        attended: null,
+                        marked_by_others: ""
+                    }))
+                })
             }
         }
-        handleFetchAttendanceData()
-    }, [username, ttData.schedule, ttData.branch, ttData.semester, attendanceData.name])
+        catch (error) {
+            alert("An error occurred. Please try again.")
+        }
+    }
 
-    function handleIsAttended(i) {
+    useEffect(() => {
+        if (ttData.schedule.length > 0) {
+            handleFetchAttendanceData()
+        }
+    }, [username, ttData.schedule.length, ttData.branch, ttData.semester, targetDate])
+
+    function handleIsAttended(i, value) {
         setAttendanceData(prev => {
             let newAttendance = [...prev.attendance]
-            newAttendance[i] = { ...newAttendance[i], attended: !newAttendance[i].attended }
+            newAttendance[i] = { ...newAttendance[i], attended: value }
             return { ...prev, attendance: newAttendance }
         })
     }
@@ -127,7 +137,7 @@ export default function ShowTimeTable() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ attendanceData: filteredAttendanceData, name: username, type: name === "reset" ? "reset" : "create" })
+                body: JSON.stringify({ attendanceData: filteredAttendanceData, name: username, date: targetDate, type: name === "reset" ? "reset" : "create" })
             })
             if (response.ok) {
                 let data = await response.json()
@@ -172,7 +182,8 @@ export default function ShowTimeTable() {
         let updatedAttendance = ttData.schedule.map(sch => ({
             time: sch.time,
             subject: sch.subject,
-            attended: false
+            attended: null,
+            marked_by_others: ""
         }))
 
         let newAttendanceData = {
@@ -189,7 +200,7 @@ export default function ShowTimeTable() {
         const newEntry = {
             time: "",
             subject: "",
-            attended: false
+            attended: null
         }
         setAttendanceData(prev => {
             const updatedAttendance = [...prev.attendance, newEntry]
@@ -200,29 +211,30 @@ export default function ShowTimeTable() {
     }
 
     return (
-        <div className="h-full min-h-screen w-full bg-[#262523] text-white px-20 pb-12" >
+        <div className="h-full min-h-screen w-full bg-gray-900 text-white px-20 pb-12" >
             <Navbar />
-            <div className="w-full flex justify-between mt-6" >
+            <div className="w-full flex justify-between items-center my-8" >
                 <p className="text-3xl font-medium" >Time-Table</p>
-                <div className="flex gap-12 text-lg font-medium" >
-                    <button onClick={handleResetTT} className="bg-slate-700 rounded-lg px-8 py-2" >Reset Time Table</button>
-                    <button onClick={() => navigate(`/${username}/mark_for_friend`)} className="bg-slate-700 rounded-lg px-8 py-2" >Mark for friend</button>
-                    <p className="bg-slate-700 rounded-lg px-10 py-2" >{ttData.semester}</p>
-                    <p className="bg-slate-700 rounded-lg px-10 py-2" >{ttData.branch}</p>
+                <div className="flex gap-6 items-center font-bold" >
+                    <button onClick={handleResetTT} className="bg-red-600 hover:bg-red-700 transition rounded-md px-6 py-2" >Reset Time Table</button>
+                    <button onClick={() => navigate(`/${username}/mark_for_friend`)} className="bg-blue-600 hover:bg-blue-700 transition rounded-md px-6 py-2" >Mark for friends</button>
+                    <p className="bg-gray-800 border-[1px] border-gray-500 rounded-md px-8 py-2" >{ttData.semester}</p>
+                    <p className="bg-gray-800 border-[1px] border-gray-500 rounded-md px-6 py-2" >{ttData.branch}</p>
+                    <input id="date-input" type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} onClick={() => document.getElementById("date-input").showPicker()} onFocus={(e) => e.target.blur()} className="bg-blue-600 hover:bg-blue-700 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 outline-none cursor-pointer" />
                 </div>
             </div>
             <div className="my-12 flex flex-col gap-8" >
                 <div className="flex gap-20 text-xl font-medium" >
                     <p className="w-1/5" >Timings</p>
                     <p className="w-2/5" >Subjects</p>
-                    <p className="w-1/5" >Status</p>
+                    <p className="w-2/5" >Status</p>
                 </div>
                 {attendanceData.attendance.map((sch, i) => (
                     <div key={i} className="flex gap-20 text-lg font-medium" >
-                        <div className="w-1/5 bg-slate-700 rounded-lg px-4 py-1" >
+                        <div className={`w-1/5 bg-gray-800 ${!isTimeEditing[i] && "hover:bg-gray-800/50"} rounded-lg px-4 py-2 border-[1px] border-gray-500`} >
                             {isTimeEditing[i] ?
                                 <div className="flex justify-between" >
-                                    <input value={newTiming} onChange={(e) => setNewTiming(e.target.value)} autoFocus className="w-full bg-slate-700 outline-none pr-6" />
+                                    <input value={newTiming} onChange={(e) => setNewTiming(e.target.value)} autoFocus className="w-full bg-gray-800 outline-none pr-6" />
                                     <MdDone onClick={() => { handleEditing("time", i); handleSaveTimeEdit(i) }} className="text-2xl mt-1 cursor-pointer" />
                                 </div>
                                 :
@@ -232,10 +244,10 @@ export default function ShowTimeTable() {
                                 </div>
                             }
                         </div>
-                        <div className="w-2/5 bg-slate-700 rounded-lg px-4 py-1" >
+                        <div className={`w-2/5 bg-gray-800 ${!isSubjectEditing[i] && "hover:bg-gray-800/50"} rounded-lg px-4 py-2 border-[1px] border-gray-500`} >
                             {isSubjectEditing[i] ?
                                 <div className="flex justify-between" >
-                                    <input value={subjectName} onChange={(e) => setSubjectName(e.target.value)} autoFocus placeholder="Enter subject name" className="w-full bg-slate-700 outline-none pr-6" />
+                                    <input value={subjectName} onChange={(e) => setSubjectName(e.target.value)} autoFocus placeholder="Enter subject name" className="w-full bg-gray-800 outline-none pr-6" />
                                     <MdDone onClick={() => { handleEditing("subject", i); handleSaveSubjectEdit(i) }} className="text-2xl mt-1 cursor-pointer" />
                                 </div>
                                 :
@@ -245,12 +257,31 @@ export default function ShowTimeTable() {
                                 </div>
                             }
                         </div>
-                        <p onClick={() => handleIsAttended(i)} className="w-1/5 bg-slate-700 rounded-lg px-4 py-1 flex justify-between cursor-pointer" >Attended: {attendanceData.attendance[i]?.attended ? <MdCheckBox className="text-2xl mt-[3px]" /> : <MdCheckBoxOutlineBlank className="text-2xl mt-[3px]" />}</p>
+                        <div className="w-2/5 bg-gray-800 hover:bg-gray-800/50 rounded-lg px-8 py-2 flex gap-6 border-[1px] border-gray-500">
+                            <div
+                                onClick={() => handleIsAttended(i, true)}
+                                className={`flex items-center gap-2 cursor-pointer ${sch.attended === true ? "text-green-400" : "text-white"}`} >
+                                {sch.attended === true ? <MdCheckBox className="text-2xl" /> : <MdCheckBoxOutlineBlank className="text-2xl" />}
+                                <p>Attended</p>
+                            </div>
+                            <div
+                                onClick={() => handleIsAttended(i, false)}
+                                className={`flex items-center gap-2 cursor-pointer ${sch.attended === false ? "text-red-400" : "text-white"}`} >
+                                {sch.attended === false ? <MdCheckBox className="text-2xl" /> : <MdCheckBoxOutlineBlank className="text-2xl" />}
+                                <p>Not Attended</p>
+                            </div>
+                            <div
+                                onClick={() => handleIsAttended(i, null)}
+                                className={`flex items-center gap-2 cursor-pointer ${sch.attended === null ? "text-yellow-400" : "text-white"}`} >
+                                {sch.attended === null ? <MdCheckBox className="text-2xl" /> : <MdCheckBoxOutlineBlank className="text-2xl" />}
+                                <p>Cancelled</p>
+                            </div>
+                        </div>
                     </div>
                 ))}
-                <div className="flex self-center mt-2 font-medium text-lg gap-16" >
-                    <button onClick={handleAddExtra} className="w-36 bg-slate-700 p-2 rounded-lg flex gap-2" ><IoMdAdd className="text-3xl" />Add Extra</button>
-                    <button onClick={() => handleSaveChanges(attendanceData)} className="w-36 bg-slate-700 p-2 rounded-lg" >Save Changes</button>
+                <div className="flex self-center mt-2 font-semibold text-lg gap-16" >
+                    <button onClick={handleAddExtra} className="w-36 bg-blue-600 hover:bg-blue-700 transition p-2 rounded-lg flex gap-2" ><IoMdAdd className="text-3xl" />Add Extra</button>
+                    <button onClick={() => handleSaveChanges(attendanceData)} className="w-36 bg-green-600 hover:bg-green-700 transition p-2 rounded-lg" >Save Changes</button>
                 </div>
             </div>
         </div>

@@ -73,14 +73,14 @@ export default function ShowRecords() {
     }
 
     return (
-        <div className="h-full min-h-screen w-full bg-[#262523] text-white px-20 pb-12" >
+        <div className="h-full min-h-screen w-full bg-gray-900 text-white px-20 pb-12" >
             <Navbar />
             <div className="w-full flex justify-between mt-6" >
                 <p className="text-3xl font-medium" >Attendance Records</p>
-                <div className="flex gap-12 text-lg font-medium" >
-                    <p className="bg-slate-700 rounded-lg px-10 py-2" >{attendanceData?.semester}</p>
-                    <p className="bg-slate-700 rounded-lg px-10 py-2" >{attendanceData?.branch}</p>
-                    <input type="date" value={targetDate} onChange={(e) => handleFetchAttendanceData(e)} className="bg-slate-700 rounded-lg px-4 py-2" />
+                <div className="flex gap-8 font-bold" >
+                    <p className="bg-gray-800 border-[1px] border-gray-500 rounded-lg px-8 py-2" >{attendanceData?.semester}</p>
+                    <p className="bg-gray-800 border-[1px] border-gray-500 rounded-lg px-6 py-2" >{attendanceData?.branch}</p>
+                    <input id="date-input" type="date" value={targetDate} onChange={(e) => handleFetchAttendanceData(e)} onClick={() => document.getElementById("date-input").showPicker()} onFocus={(e) => e.target.blur()} className="bg-blue-900 hover:bg-blue-900/50 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 outline-none cursor-pointer" />
                 </div>
             </div>
             <div className="my-12 flex flex-col gap-8" >
@@ -91,13 +91,23 @@ export default function ShowRecords() {
                 </div>
                 {attendanceData.attendance.length > 0 && attendanceData.attendance.map((record, i) => (
                     <div key={i} className="flex gap-20 text-lg font-medium" >
-                        <p className="w-1/6 bg-slate-700 rounded-lg px-4 py-1" >{record.time}</p>
-                        <p className="w-2/5 bg-slate-700 rounded-lg px-4 py-1" >{record.subject}</p>
+                        <p className="w-1/6 bg-gray-800 hover:bg-gray-800/50 transition border-[1px] border-gray-500 rounded-lg px-4 py-2" >{record.time}</p>
+                        <p className="w-2/5 bg-gray-800 hover:bg-gray-800/50 transition border-[1px] border-gray-500 rounded-lg px-4 py-2" >{record.subject}</p>
                         <div className="w-1/5 relative group" >
                             {record.marked_by_others !== "" &&
                                 <p className="absolute bottom-12 -right-12 bg-black text-white text-sm px-4 py-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap" >Marked by: &nbsp; {record.marked_by_others}</p>
                             }
-                            <p className="w-full bg-slate-700 rounded-lg px-4 py-1 flex justify-between" >{attendanceData.attendance[i]?.attended ? <> Attended <CgCheckO className="text-2xl mt-1" /> </> : <>Not Attended <CgCloseO className="text-2xl mt-1" /> </>}</p>
+                            <p className="w-full bg-gray-800 hover:bg-gray-800/50 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 flex justify-between" >
+                                {attendanceData.attendance[i]?.attended === true &&
+                                    <> Attended <CgCheckO className="text-2xl mt-1" /> </>
+                                }
+                                {attendanceData.attendance[i]?.attended === false &&
+                                    <>Not Attended <CgCloseO className="text-2xl mt-1" /> </>
+                                }
+                                {attendanceData.attendance[i]?.attended === null &&
+                                    <>Cancelled</>
+                                }
+                            </p>
                         </div>
                     </div>
                 ))}

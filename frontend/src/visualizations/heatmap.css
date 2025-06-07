@@ -1,0 +1,15 @@
+.color-empty {
+  fill: #2d3748
+}
+
+.color-attended {
+  fill: #16a34a
+}
+
+.color-not-attended {
+  fill: #ef4444
+}
+
+.color-cancelled {
+  fill: #eab308
+}

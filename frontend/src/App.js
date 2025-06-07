@@ -18,6 +18,8 @@ import ForgotProfilePassword from './profile/profile-fp';
 import VerifyProfileOtp from './profile/profile-vp'
 import ChangeProfilePassword from './profile/profile-cp';
 import ShowAnalysis from './attendance/attendance_analysis';
+import About from './about/about';
+import Help from './help/help';
 
 export const Context = React.createContext()
 
@@ -31,6 +33,8 @@ function App() {
       <Router>
         <Routes>
           <Route path='/' element={<Home />} />
+          <Route path='/about' element={<About />} />
+          <Route path='/help' element={<Help />} />
           <Route path='/login' element={<Login />} />
           <Route path="/login/forgotpassword" element={<ForgotPassword />} />
           <Route path="/login/forgotpassword/verify" element={<VerifyOtp />} />

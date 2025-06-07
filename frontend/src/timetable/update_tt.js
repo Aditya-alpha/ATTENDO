@@ -74,12 +74,12 @@ export default function UpdateTimeTable() {
     }
 
     return (
-        <div className="h-screen w-full bg-[#262523] text-white px-20 pb-12" >
+        <div className="min-h-screen w-full bg-gray-900 text-white px-20 pb-12" >
             <Navbar />
             <div className="w-full flex justify-between mt-6" >
                 <p className="text-3xl font-medium" >Update Time-Table</p>
                 <div className="flex gap-12" >
-                    <select value={ttData.semester} onChange={(e) => setTtData(prev => ({ ...prev, semester: e.target.value }))} className="bg-slate-700 rounded-lg px-4 py-2 text-lg font-medium outline-none" >
+                    <select value={ttData.semester} onChange={(e) => setTtData(prev => ({ ...prev, semester: e.target.value }))} className="bg-gray-800 hover:bg-gray-900 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 text-lg font-medium outline-none cursor-pointer" >
                         <option value="Sem I" >Sem I</option>
                         <option value="Sem II" >Sem II</option>
                         <option value="Sem III" >Sem III</option>
@@ -89,7 +89,7 @@ export default function UpdateTimeTable() {
                         <option value="Sem VII" >Sem VII</option>
                         <option value="Sem VIII" >Sem VIII</option>
                     </select>
-                    <select value={ttData.branch} onChange={(e) => setTtData(prev => ({ ...prev, branch: e.target.value }))} className="bg-slate-700 rounded-lg px-4 py-2 text-lg font-medium outline-none" >
+                    <select value={ttData.branch} onChange={(e) => setTtData(prev => ({ ...prev, branch: e.target.value }))} className="bg-gray-800 hover:bg-gray-900 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 text-lg font-medium outline-none cursor-pointer" >
                         <option value="Mechanical" >Mechanical</option>
                         <option value="Civil" >Civil</option>
                         <option value="Textile" >Textile</option>
@@ -109,7 +109,7 @@ export default function UpdateTimeTable() {
                 </div>
                 {[...Array(createField)].map((_, i) =>
                     <div key={`field_${i}`} className="flex gap-20" >
-                        <select value={ttData.schedule[i].time} onChange={(e) => handleFieldChange(e, i, "time")} className="w-1/5 bg-slate-700 rounded-lg px-4 py-1 text-lg font-medium outline-none" >
+                        <select value={ttData.schedule[i].time} onChange={(e) => handleFieldChange(e, i, "time")} className="w-1/5 bg-gray-800 hover:bg-gray-900 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 text-lg font-medium outline-none" >
                             <option value="8:30 am to 9:30 am" >8:30 am to 9:30 am</option>
                             <option value="9:30 am to 10:30 am" >9:30 am to 10:30 am</option>
                             <option value="10:30 am to 11:30 am" >10:30 am to 11:30 am</option>
@@ -121,12 +121,12 @@ export default function UpdateTimeTable() {
                             <option value="4:30 pm to 5:30 pm" >4:30 pm to 5:30 pm</option>
                             <option value="5:30 pm to 6:30 pm" >5:30 pm to 6:30 pm</option>
                         </select>
-                        <input value={ttData.schedule[i].subject} onChange={(e) => handleFieldChange(e, i, "subject")} className="w-full px-4 rounded-lg text-black bg-slate-300 font-medium placeholder:text-gray-600" placeholder="Enter the name of the subject" />
+                        <input value={ttData.schedule[i].subject} onChange={(e) => handleFieldChange(e, i, "subject")} className="w-full px-4 py-2 rounded-lg text-black bg-slate-300 font-medium placeholder:text-gray-600 outline-none" placeholder="Enter the name of the subject" />
                     </div>
                 )}
                 <div className="flex self-center gap-8 font-medium text-lg" >
-                    <button onClick={handleCreateField} className="w-36 bg-slate-700 p-2 rounded-lg flex gap-2" ><IoMdAdd className="text-3xl" />Add field</button>
-                    <button onClick={handleSaveTT} className="w-36 bg-slate-700 p-2 rounded-lg" >Save</button>
+                    <button onClick={handleCreateField} className="w-36 bg-blue-600 hover:bg-blue-700 transition p-2 rounded-lg flex gap-2" ><IoMdAdd className="text-3xl" />Add field</button>
+                    <button onClick={handleSaveTT} className="w-36 bg-green-600 hover:bg-green-700 transition p-2 rounded-lg" >Save</button>
                 </div>
             </div>
         </div>

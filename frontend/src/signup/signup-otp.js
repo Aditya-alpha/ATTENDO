@@ -63,15 +63,15 @@ export default function SignupOTP() {
     }
 
     return (
-        <div className="h-screen w-full flex justify-center items-center bg-[#262523] text-white">
-            <div className="h-96 w-[420px] rounded-lg py-4 px-5 bg-[#0e0e0e] opacity-90 shadow-2xl hover:scale-105 transition-all duration-300 max-sm:mx-4">
+        <div className="h-screen w-full flex justify-center items-center bg-gray-900 text-white">
+            <div className="h-96 w-[420px] rounded-lg py-4 px-5 bg-gray-700/70 shadow-2xl hover:scale-105 transition-all duration-300 max-sm:mx-4">
                 <div className="flex justify-between">
                     <p className="font-medium text-3xl">Verify</p>
                     <RxCross2 onClick={() => { navigate("/signup"); window.localStorage.removeItem("username"); window.localStorage.removeItem("email") }} className="text-3xl mt-1 -mr-1 cursor-pointer hover:scale-125 transition-all duration-300" />
                 </div>
                 <p className="my-6">Enter OTP sent on your email</p>
                 <form>
-                    <input type="number" onChange={(e) => setEnteredOtp(e.target.value)} className="[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none block h-12 w-full px-3 rounded-md text-black mt-4" />
+                    <input type="number" onChange={(e) => setEnteredOtp(e.target.value)} className="[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none block h-12 w-full px-3 rounded-md text-black mt-4 outline-none" />
                     <button onClick={handleSubmit} className="h-12 w-full mt-8 hover:text-lg transition-all duration-200 rounded-full bg-white text-black font-medium" >Submit OTP</button>
                 </form>
                 <button onClick={handleResendOtp} className={`h-12 w-full mt-7 hover:text-lg transition-all duration-200 rounded-full font-medium text-black ${isResending ? "bg-gray-400 cursor-not-allowed" : "bg-white"}`} >

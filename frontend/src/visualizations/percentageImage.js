@@ -1,9 +1,9 @@
 export default function CircularProgress({ percentage }) {
-    const radius = 100;
-    const stroke = 18;
-    const normalizedRadius = radius - stroke / 2;
-    const circumference = 2 * Math.PI * normalizedRadius;
-    const strokeDashoffset = circumference - (percentage / 100) * circumference;
+    const radius = 110
+    const stroke = 20
+    const normalizedRadius = radius - stroke / 2
+    const circumference = 2 * Math.PI * normalizedRadius
+    const strokeDashoffset = circumference - (percentage / 100) * circumference
 
     return (
         <svg height={radius * 2} width={radius * 2}>

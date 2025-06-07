@@ -225,10 +225,10 @@ app.get("/:username/mark_attendance", async (req, res) => {
 })
 
 app.post("/:username/mark_attendance", async (req, res) => {
-    let { attendanceData, name, type } = req.body
+    let { attendanceData, date, name, type } = req.body
     if (type == "create") {
         try {
-            await Attendance.updateOne({ username: name, date: new Date().toISOString().slice(0, 10) }, { $set: attendanceData }, { upsert: true })
+            let data = await Attendance.updateOne({ username: name, date }, { $set: attendanceData }, { upsert: true})
             res.status(200).send({ message: "Saved successfully" })
         }
         catch (error) {
@@ -237,7 +237,7 @@ app.post("/:username/mark_attendance", async (req, res) => {
     }
     else if (type == "reset") {
         try {
-            await Attendance.deleteOne({ username: name, date: new Date().toISOString().slice(0, 10) })
+            await Attendance.deleteOne({ username: name, date })
             res.status(200).send({ message: "Reset successful." })
         }
         catch (error) {
@@ -246,8 +246,11 @@ app.post("/:username/mark_attendance", async (req, res) => {
     }
     else {
         try {
-            let data = await Attendance.findOne({ username: name, date: new Date().toISOString().slice(0, 10) })
-            res.status(200).json(data)
+            let data = await Attendance.findOne({ username: name, date })
+            if (data)
+                res.status(200).json(data)
+            else
+                res.status(408).send({ message: "No records found." })
         }
         catch (error) {
             res.status(500).send({ message: "Internal servor error! Please try again." })
@@ -295,7 +298,7 @@ app.post("/:username/mark_for_friend", async (req, res) => {
 app.get("/:username/attendance_records", async (req, res) => {
     let { username } = req.params
     try {
-        let data = await Attendance.find({ username }).sort({ date: -1}).limit(1)
+        let data = await Attendance.find({ username }).sort({ date: -1 }).limit(1)
         if (data.length > 0) {
             res.status(200).json(data[0])
         }
@@ -330,7 +333,10 @@ app.get("/:username/attendance_analysis", async (req, res) => {
     try {
         let user = await UserInfo.findOne({ username }).select("branch semester")
         let data = await Attendance.find({ username, branch: user.branch, semester: user.semester })
-        res.status(200).json(data)
+        if (data.length > 0)
+            res.status(200).json(data)
+        else
+            res.status(400).send({ message: "No attendance records found !" })
     }
     catch (error) {
         res.status(500).send({ message: "Internal servor error! Please try again." })
