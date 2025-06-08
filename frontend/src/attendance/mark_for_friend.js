@@ -45,7 +45,8 @@ export default function ShowTimeTable() {
                 })
                 if (response.ok) {
                     let data = await response.json()
-                    setMarkedFriends(data)
+                    let uniqueData = [...new Map(data.map(item => [item.username, item])).values()]
+                    setMarkedFriends(uniqueData)
                 }
             }
             catch (error) {
@@ -205,7 +206,7 @@ export default function ShowTimeTable() {
                 body: JSON.stringify({ name: user.username, date, type: "show" })
             })
             let data = await response.json()
-            if (data) {
+            if (data.attendance?.length > 0) {
                 setAttendanceData(data)
             }
             else {

@@ -180,7 +180,7 @@ export default function ShowAnalysis() {
             }
             <div>
                 <div className="flex justify-between items-center" >
-                    <p className="text-2xl font-semibold" >Subject-wise Attendance Summary Table</p>
+                    <p className="text-2xl font-semibold" >Attendance Summary Table</p>
                     <div className="flex items-center gap-4 text-2xl font-semibold border-2 border-gray-500 p-3 rounded-lg" >
                         <p>Bar Chart</p>
                         {typeofAnalysis ?

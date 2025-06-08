@@ -72,7 +72,9 @@ export default function ShowTimeTable() {
                 }
             }
             else {
-                alert ("No record found but you can mark the attendance.")
+                if (targetDate !== new Date().toISOString().slice(0, 10)) {
+                    alert ("No record found but you can mark the attendance.")
+                }
                 setAttendanceData({
                     branch: ttData.branch,
                     semester: ttData.semester,

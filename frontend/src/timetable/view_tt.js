@@ -3,27 +3,44 @@ import Navbar from "../navbar/navbar"
 
 export default function ShowTimeTable() {
 
+    let username = window.localStorage.getItem("username")
     let [ttData, setTtData] = useState({
-        branch: "Mechanical",
-        semester: "Sem I",
-        schedule: [{
-            time: "",
-            subject: ""
-        }]
+        branch: "",
+        semester: "",
+        schedule: []
     })
+
+    let [selectedBranch, setSelectedBranch] = useState("")
+    let [selectedSemester, setSelectedSemester] = useState("")
+
+    useEffect(() => {
+        async function handleFetchUserInfo() {
+            try {
+                const response = await fetch(`http://localhost:8000/${username}/view_time-table`, {
+                    method: "GET"
+                })
+                if (response.ok) {
+                    let data = await response.json()
+                    setSelectedBranch(data.branch)
+                    setSelectedSemester(data.semester)
+                }
+            }
+            catch (error) {
+                alert("An error occurred. Please try again.")
+            }
+        }
+        handleFetchUserInfo()
+    }, [username])
 
     useEffect(() => {
         async function handleFetchTTData() {
             try {
-                const response = await fetch("http://localhost:8000/view_time-table", {
+                const response = await fetch(`http://localhost:8000/${username}/view_time-table`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({
-                        branch: ttData.branch,
-                        semester: ttData.semester
-                    })
+                    body: JSON.stringify({ branch: selectedBranch, semester: selectedSemester })
                 })
                 if (response.ok) {
                     let data = await response.json()
@@ -35,7 +52,7 @@ export default function ShowTimeTable() {
             }
         }
         handleFetchTTData()
-    }, [ttData.branch, ttData.semester])
+    }, [username, selectedBranch, selectedSemester])
 
     return (
         <div className="h-full min-h-screen w-full bg-gray-900 text-white px-20 pb-12" >
@@ -45,7 +62,7 @@ export default function ShowTimeTable() {
                 <div className="flex gap-12" >
                     <div className="h-full relative group" >
                         <p className="w-72 absolute -top-10 -left-20 bg-gray-950 rounded-md px-5 py-1 opacity-0 group-hover:opacity-100" >You can select semester from here</p>
-                        <select value={ttData.semester} onChange={(e) => setTtData(prev => ({ ...prev, semester: e.target.value }))} className="bg-gray-800 hover:bg-gray-900 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 text-lg font-medium outline-none cursor-pointer" >
+                        <select value={selectedSemester} onChange={(e) => setSelectedSemester(e.target.value)} className="bg-gray-800 hover:bg-gray-900 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 text-lg font-medium outline-none cursor-pointer" >
                             <option value="Sem I" >Sem I</option>
                             <option value="Sem II" >Sem II</option>
                             <option value="Sem III" >Sem III</option>
@@ -58,7 +75,7 @@ export default function ShowTimeTable() {
                     </div>
                     <div className="h-full relative group" >
                         <p className="w-64 absolute -top-10 -left-7 bg-gray-950 rounded-md px-3 py-1 opacity-0 group-hover:opacity-100" >You can select branch from here</p>
-                        <select value={ttData.branch} onChange={(e) => setTtData(prev => ({ ...prev, branch: e.target.value }))} className="bg-gray-800 hover:bg-gray-900 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 text-lg font-medium outline-none cursor-pointer" >
+                        <select value={selectedBranch} onChange={(e) => setSelectedBranch(e.target.value)} className="bg-gray-800 hover:bg-gray-900 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 text-lg font-medium outline-none cursor-pointer" >
                             <option value="Mechanical" >Mechanical</option>
                             <option value="Civil" >Civil</option>
                             <option value="Textile" >Textile</option>
@@ -77,7 +94,7 @@ export default function ShowTimeTable() {
                     <p className="w-1/6" >Timings</p>
                     <p className="w-2/5" >Subjects</p>
                 </div>
-                {ttData.schedule.map((sch, i) => (
+                {ttData?.schedule.map((sch, i) => (
                     <div key={i} className="flex gap-20" >
                         <p className="w-1/6 bg-gray-800 hover:bg-gray-800/50 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 text-lg font-medium" >{sch.time}</p>
                         <p className="w-2/5 bg-gray-800 hover:bg-gray-800/50 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 text-lg font-medium" >{sch.subject}</p>

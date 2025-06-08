@@ -201,7 +201,18 @@ app.post("/update_time-table", async (req, res) => {
     }
 })
 
-app.post("/view_time-table", async (req, res) => {
+app.get("/:username/view_time-table", async (req, res) => {
+    let { username } = req.params
+    try {
+        let data = await UserInfo.findOne({ username }).select("branch semester")
+        res.status(200).json(data)
+    }
+    catch (error) {
+        res.status(500).send({ message: "Internal servor error! Please try again." })
+    }
+})
+
+app.post("/:username/view_time-table", async (req, res) => {
     let { branch, semester } = req.body
     try {
         let data = await TT.findOne({ branch, semester })

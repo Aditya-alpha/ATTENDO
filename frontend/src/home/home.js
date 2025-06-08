@@ -2,11 +2,13 @@ import { useContext } from "react"
 import Navbar from "../navbar/navbar"
 import { FaCheckCircle, FaCalendarAlt, FaUserFriends, FaChartBar, FaUserEdit, FaCalendarCheck, FaChartLine, FaBook } from "react-icons/fa"
 import { Context } from "../App"
+import { useNavigate } from "react-router-dom"
 
 
 export default function Home() {
 
-    let [isSignedin, setIsSignedin] = useContext(Context)
+    let navigate = useNavigate()
+    let [isSignedin] = useContext(Context)
     let username = window.localStorage.getItem("username")
 
     return (
@@ -20,32 +22,31 @@ export default function Home() {
                     </div>
                     <p className="text-3xl font-semibold text-indigo-300 text-center mt-16 mb-8" >✨ What would you like to do today?</p>
                     <div className="flex gap-8 px-40 flex-wrap" >
-                        <div className="flex items-center justify-center gap-6 bg-gray-800 p-6 rounded-2xl hover:bg-gray-700 transition flex-1 min-w-[300px]" >
+                        <div onClick={() => navigate(`/${username}/mark_attendance`)} className="flex items-center justify-center gap-6 bg-gray-800 p-6 rounded-2xl hover:bg-gray-700 transition flex-1 min-w-[300px] cursor-pointer" >
                             <FaCalendarCheck className="text-4xl text-green-400" />
                             <p className="text-xl font-semibold text-indigo-200">Mark Attendance</p>
                         </div>
-                        <div className="flex items-center justify-center gap-6 bg-gray-800 p-6 rounded-2xl hover:bg-gray-700 transition flex-1 min-w-[300px]" >
+                        <div onClick={() => navigate(`/${username}/attendance_analysis`)} className="flex items-center justify-center gap-6 bg-gray-800 p-6 rounded-2xl hover:bg-gray-700 transition flex-1 min-w-[300px] cursor-pointer" >
                             <FaChartLine className="text-4xl text-yellow-400" />
                             <p className="text-xl font-semibold text-indigo-200">View Analysis</p>
                         </div>
-                        <div className="flex items-center justify-center gap-6 bg-gray-800 p-6 rounded-2xl hover:bg-gray-700 transition flex-1 min-w-[300px]" >
+                        <div onClick={() => navigate(`/${username}/profile`)} className="flex items-center justify-center gap-6 bg-gray-800 p-6 rounded-2xl hover:bg-gray-700 transition flex-1 min-w-[300px] cursor-pointer" >
                             <FaUserEdit className="text-4xl text-pink-400" />
                             <p className="text-xl font-semibold text-indigo-200">Edit Profile</p>
                         </div>
-                        <div className="flex items-center justify-center gap-6 bg-gray-800 p-6 rounded-2xl hover:bg-gray-700 transition flex-1 min-w-[300px]" >
+                        <div onClick={() => navigate(`/${username}/mark_for_friend`)} className="flex items-center justify-center gap-6 bg-gray-800 p-6 rounded-2xl hover:bg-gray-700 transition flex-1 min-w-[300px] cursor-auto" >
                             <FaUserFriends className="text-4xl text-blue-300" />
                             <p className="text-xl font-semibold text-indigo-200">Mark for Friends</p>
                         </div>
-                        <div className="flex items-center justify-center gap-6 bg-gray-800 p-6 rounded-2xl hover:bg-gray-700 transition flex-1 min-w-[300px]" >
+                        <div onClick={() => navigate(`/${username}/view_time_table`)} className="flex items-center justify-center gap-6 bg-gray-800 p-6 rounded-2xl hover:bg-gray-700 transition flex-1 min-w-[300px] cursor-pointer" >
                             <FaBook className="text-4xl text-purple-400" />
                             <p className="text-xl font-semibold text-indigo-200">My Timetable</p>
                         </div>
                     </div>
                     <div className="bg-gray-900 mt-12 pt-6 px-6 text-gray-500 text-sm border-t border-gray-800 flex justify-center gap-1">
                         Need help? Visit the 
-                        <p className="underline text-indigo-300">Help Page</p>
-                         or learn more 
-                         <p className="underline text-indigo-300">About Us</p>.
+                        <p onClick={() => navigate("/help")} className="underline text-indigo-300 cursor-pointer">Help Page</p>or learn more 
+                        <p onClick={() => navigate("/about")} className="underline text-indigo-300 cursor-pointer">About Us</p>.
                     </div>
                 </div>
                 :
@@ -53,7 +54,7 @@ export default function Home() {
                     <div className="bg-gradient-to-br from-indigo-800 to-gray-900 text-center px-8 py-20" >
                         <p className="text-5xl font-extrabold text-indigo-200 mb-8" >Welcome to <span className="text-indigo-400">Attendo</span></p>
                         <p className="w-1/2 text-xl mx-auto mb-6 text-gray-300" >Your personal student attendance tracker designed to help you stay organized, track progress, and analyze class engagement visually.</p>
-                        <p className="w-1/6 bg-indigo-500 hover:bg-indigo-600 px-8 py-3 mx-auto rounded-full text-lg font-semibold transition duration-300 cursor-pointer">Get Started</p>
+                        <p onClick={() => navigate("/login")} className="w-1/6 bg-indigo-500 hover:bg-indigo-600 px-8 py-3 mx-auto rounded-full text-lg font-semibold transition duration-300 cursor-pointer">Get Started</p>
                     </div>
                     <div className="py-16">
                         <p className="text-4xl font-bold text-center mb-12 text-indigo-300">Features</p>
@@ -92,8 +93,8 @@ export default function Home() {
                     </div>
                     <div className="bg-gray-900 text-gray-400 text-sm flex gap-2 justify-center">
                         <p>© {new Date().getFullYear()} Attendo. Made for students, by students. </p>|
-                        <p className="underline">About</p> |
-                        <p className="underline">Help</p>
+                        <p onClick={() => navigate("/about")} className="underline cursor-pointer">About</p> |
+                        <p onClick={() => navigate("/help")} className="underline cursor-pointer">Help</p>
                     </div>
                 </div>
             }

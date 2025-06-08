@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import Home from './home/home';
 import Login from './login/login';
 import ForgotPassword from './login/login-fp';
@@ -23,6 +24,14 @@ import Help from './help/help';
 
 export const Context = React.createContext()
 
+function ScrollToTop() {
+  let { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+  return null
+}
+
 function App() {
 
   let [isSignedin, setIsSignedin] = useState(false)
@@ -31,6 +40,7 @@ function App() {
   return (
     <Context.Provider value={[isSignedin, setIsSignedin, username, setUsername]} >
       <Router>
+        <ScrollToTop />
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/about' element={<About />} />
@@ -41,7 +51,7 @@ function App() {
           <Route path="/login/updatepassword" element={<ChangePassword />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/signup/otp' element={<SignupOTP />} />
-          <Route path='/view_time-table' element={<ShowTimeTable />} />
+          <Route path='/:username/view_time_table' element={<ShowTimeTable />} />
           <Route path='/update_time-table' element={<UpdateTimeTable />} />
           <Route path='/:username/mark_attendance' element={<MarkAttendance />} />
           <Route path='/:username/attendance_records' element={<ShowRecords />} />
