@@ -13,6 +13,10 @@ let TTSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    day: {
+        type: String,
+        required: true
+    },
     schedule: [
         {
             time: {

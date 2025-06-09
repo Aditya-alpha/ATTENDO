@@ -191,9 +191,9 @@ app.post("/signup/resend-otp", async (req, res) => {
 })
 
 app.post("/update_time-table", async (req, res) => {
-    let { branch, semester, schedule } = req.body
+    let { branch, semester, day, schedule } = req.body
     try {
-        await TT.create({ branch, semester, schedule })
+        await TT.create({ branch, semester, day, schedule })
         res.status(200).send({ message: "Time-Table saved successfully!" })
     }
     catch (error) {
@@ -213,21 +213,9 @@ app.get("/:username/view_time-table", async (req, res) => {
 })
 
 app.post("/:username/view_time-table", async (req, res) => {
-    let { branch, semester } = req.body
+    let { branch, semester, day } = req.body
     try {
-        let data = await TT.findOne({ branch, semester })
-        res.status(200).json(data)
-    }
-    catch (error) {
-        res.status(500).send({ message: "Internal servor error! Please try again." })
-    }
-})
-
-app.get("/:username/mark_attendance", async (req, res) => {
-    let { username } = req.params
-    try {
-        let user = await UserInfo.findOne({ username }).select("branch semester")
-        let data = await TT.findOne({ branch: user.branch, semester: user.semester })
+        let data = await TT.findOne({ branch, semester, day })
         res.status(200).json(data)
     }
     catch (error) {
@@ -239,7 +227,7 @@ app.post("/:username/mark_attendance", async (req, res) => {
     let { attendanceData, date, name, type } = req.body
     if (type == "create") {
         try {
-            let data = await Attendance.updateOne({ username: name, date }, { $set: attendanceData }, { upsert: true})
+            await Attendance.updateOne({ username: name, date }, { $set: attendanceData }, { upsert: true })
             res.status(200).send({ message: "Saved successfully" })
         }
         catch (error) {
@@ -250,6 +238,17 @@ app.post("/:username/mark_attendance", async (req, res) => {
         try {
             await Attendance.deleteOne({ username: name, date })
             res.status(200).send({ message: "Reset successful." })
+        }
+        catch (error) {
+            res.status(500).send({ message: "Internal servor error! Please try again." })
+        }
+    }
+    else if (type == "fetchTT") {
+        try {
+            let daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+            let user = await UserInfo.findOne({ username: name }).select("branch semester")
+            let data = await TT.findOne({ branch: user.branch, semester: user.semester, day: daysOfWeek[new Date(date).getDay()] })
+            res.status(200).json(data)
         }
         catch (error) {
             res.status(500).send({ message: "Internal servor error! Please try again." })

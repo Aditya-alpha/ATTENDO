@@ -12,6 +12,7 @@ export default function ShowTimeTable() {
     let [ttData, setTtData] = useState({
         branch: "",
         semester: "",
+        day: "",
         schedule: [{
             time: "",
             subject: ""
@@ -36,27 +37,7 @@ export default function ShowTimeTable() {
     let [isSubjectEditing, setIsSubjectEditing] = useState([])
     let [isTimeEditing, setIsTimeEditing] = useState([])
 
-    useEffect(() => {
-        async function handleFetchTTData() {
-            try {
-                const response = await fetch(`http://localhost:8000/${username}/mark_attendance`, {
-                    method: "GET"
-                })
-                if (response.ok) {
-                    let data = await response.json()
-                    setTtData(data)
-                    setIsSubjectEditing(() => data.schedule.map(() => false))
-                    setIsTimeEditing(() => data.schedule.map(() => false))
-                }
-            }
-            catch (error) {
-                alert("An error occurred. Please try again.")
-            }
-        }
-        handleFetchTTData()
-    }, [username])
-
-    async function handleFetchAttendanceData() {
+    async function handleFetchAttendanceData(timetable) {
         try {
             const response = await fetch(`http://localhost:8000/${username}/mark_attendance`, {
                 method: "POST",
@@ -73,13 +54,13 @@ export default function ShowTimeTable() {
             }
             else {
                 if (targetDate !== new Date().toISOString().slice(0, 10)) {
-                    alert ("No record found but you can mark the attendance.")
+                    alert("No record found but you can mark the attendance.")
                 }
                 setAttendanceData({
-                    branch: ttData.branch,
-                    semester: ttData.semester,
+                    branch: timetable.branch,
+                    semester: timetable.semester,
                     date: targetDate,
-                    attendance: ttData.schedule.map(sch => ({
+                    attendance: timetable.schedule.map(sch => ({
                         time: sch.time,
                         subject: sch.subject,
                         attended: null,
@@ -94,10 +75,30 @@ export default function ShowTimeTable() {
     }
 
     useEffect(() => {
-        if (ttData.schedule.length > 0) {
-            handleFetchAttendanceData()
+        async function handleFetchTTData() {
+            try {
+                const response = await fetch(`http://localhost:8000/${username}/mark_attendance`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ name: username, date: targetDate, type: "fetchTT" })
+                })
+                if (response.ok) {
+                    let data = await response.json()
+                    console.log(data)
+                    setTtData(data)
+                    setIsSubjectEditing(() => data.schedule.map(() => false))
+                    setIsTimeEditing(() => data.schedule.map(() => false))
+                    handleFetchAttendanceData(data)
+                }
+            }
+            catch (error) {
+                alert("An error occurred. Please try again.")
+            }
         }
-    }, [username, ttData.schedule.length, ttData.branch, ttData.semester, targetDate])
+        handleFetchTTData()
+    }, [username, targetDate])
 
     function handleIsAttended(i, value) {
         setAttendanceData(prev => {
@@ -220,6 +221,7 @@ export default function ShowTimeTable() {
                 <div className="flex gap-6 items-center font-bold" >
                     <button onClick={handleResetTT} className="bg-red-600 hover:bg-red-700 transition rounded-md px-6 py-2" >Reset Time Table</button>
                     <button onClick={() => navigate(`/${username}/mark_for_friend`)} className="bg-blue-600 hover:bg-blue-700 transition rounded-md px-6 py-2" >Mark for friends</button>
+                    <p className="bg-gray-800 border-[1px] border-gray-500 rounded-md px-8 py-2" >{ttData.day}</p>
                     <p className="bg-gray-800 border-[1px] border-gray-500 rounded-md px-8 py-2" >{ttData.semester}</p>
                     <p className="bg-gray-800 border-[1px] border-gray-500 rounded-md px-6 py-2" >{ttData.branch}</p>
                     <input id="date-input" type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} onClick={() => document.getElementById("date-input").showPicker()} onFocus={(e) => e.target.blur()} className="bg-blue-600 hover:bg-blue-700 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 outline-none cursor-pointer" />
@@ -236,7 +238,11 @@ export default function ShowTimeTable() {
                         <div className={`w-1/5 bg-gray-800 ${!isTimeEditing[i] && "hover:bg-gray-800/50"} rounded-lg px-4 py-2 border-[1px] border-gray-500`} >
                             {isTimeEditing[i] ?
                                 <div className="flex justify-between" >
-                                    <input value={newTiming} onChange={(e) => setNewTiming(e.target.value)} autoFocus className="w-full bg-gray-800 outline-none pr-6" />
+                                    <select value={newTiming} onChange={(e) => setNewTiming(e.target.value)} className="w-full bg-gray-800 outline-none mr-2" >
+                                        {ttData.schedule.map((sch, i) =>
+                                            <option key={i} value={sch.time} >{sch.time}</option>
+                                        )}
+                                    </select>
                                     <MdDone onClick={() => { handleEditing("time", i); handleSaveTimeEdit(i) }} className="text-2xl mt-1 cursor-pointer" />
                                 </div>
                                 :
@@ -249,7 +255,11 @@ export default function ShowTimeTable() {
                         <div className={`w-2/5 bg-gray-800 ${!isSubjectEditing[i] && "hover:bg-gray-800/50"} rounded-lg px-4 py-2 border-[1px] border-gray-500`} >
                             {isSubjectEditing[i] ?
                                 <div className="flex justify-between" >
-                                    <input value={subjectName} onChange={(e) => setSubjectName(e.target.value)} autoFocus placeholder="Enter subject name" className="w-full bg-gray-800 outline-none pr-6" />
+                                    <select value={subjectName} onChange={(e) => setSubjectName(e.target.value)} className="w-full bg-gray-800 outline-none mr-12" >
+                                        {ttData.schedule.map((sch, i) =>
+                                            <option key={i} value={sch.subject} >{sch.subject}</option>
+                                        )}
+                                    </select>
                                     <MdDone onClick={() => { handleEditing("subject", i); handleSaveSubjectEdit(i) }} className="text-2xl mt-1 cursor-pointer" />
                                 </div>
                                 :

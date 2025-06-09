@@ -9,6 +9,7 @@ export default function UpdateTimeTable() {
     let [ttData, setTtData] = useState({
         branch: "Mechanical",
         semester: "Sem I",
+        day: "Monday",
         schedule: Array.from({ length: createField }, () => ({
             time: "8:30 am to 9:30 am",
             subject: ""
@@ -57,6 +58,7 @@ export default function UpdateTimeTable() {
                 body: JSON.stringify({
                     branch: ttData.branch,
                     semester: ttData.semester,
+                    day: ttData.day,
                     schedule: nonEmptySubjectsSchedule
                 })
             })
@@ -79,6 +81,15 @@ export default function UpdateTimeTable() {
             <div className="w-full flex justify-between mt-6" >
                 <p className="text-3xl font-medium" >Update Time-Table</p>
                 <div className="flex gap-12" >
+                    <select value={ttData.day} onChange={(e) => setTtData(prev => ({ ...prev, day: e.target.value }))} className="bg-gray-800 hover:bg-gray-900 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 text-lg font-medium outline-none cursor-pointer" >
+                        <option value="Monday" >Monday</option>
+                        <option value="Tuesday" >Tuesday</option>
+                        <option value="Wednesday" >Wednesday</option>
+                        <option value="Thursday" >Thursday</option>
+                        <option value="Friday" >Friday</option>
+                        <option value="Saturday" >Saturday</option>
+                        <option value="Sunday" >Sunday</option>
+                    </select>
                     <select value={ttData.semester} onChange={(e) => setTtData(prev => ({ ...prev, semester: e.target.value }))} className="bg-gray-800 hover:bg-gray-900 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 text-lg font-medium outline-none cursor-pointer" >
                         <option value="Sem I" >Sem I</option>
                         <option value="Sem II" >Sem II</option>

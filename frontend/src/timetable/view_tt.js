@@ -7,11 +7,13 @@ export default function ShowTimeTable() {
     let [ttData, setTtData] = useState({
         branch: "",
         semester: "",
+        day: "",
         schedule: []
     })
 
     let [selectedBranch, setSelectedBranch] = useState("")
     let [selectedSemester, setSelectedSemester] = useState("")
+    let [selectedDay, setSelectedDay] = useState("")
 
     useEffect(() => {
         async function handleFetchUserInfo() {
@@ -23,6 +25,8 @@ export default function ShowTimeTable() {
                     let data = await response.json()
                     setSelectedBranch(data.branch)
                     setSelectedSemester(data.semester)
+                    let daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+                    setSelectedDay(daysOfWeek[new Date().getDay()])
                 }
             }
             catch (error) {
@@ -40,7 +44,7 @@ export default function ShowTimeTable() {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ branch: selectedBranch, semester: selectedSemester })
+                    body: JSON.stringify({ branch: selectedBranch, semester: selectedSemester, day: selectedDay })
                 })
                 if (response.ok) {
                     let data = await response.json()
@@ -52,7 +56,7 @@ export default function ShowTimeTable() {
             }
         }
         handleFetchTTData()
-    }, [username, selectedBranch, selectedSemester])
+    }, [username, selectedBranch, selectedSemester, selectedDay])
 
     return (
         <div className="h-full min-h-screen w-full bg-gray-900 text-white px-20 pb-12" >
@@ -60,6 +64,18 @@ export default function ShowTimeTable() {
             <div className="w-full flex justify-between mt-6" >
                 <p className="text-3xl font-medium" >Time-Table</p>
                 <div className="flex gap-12" >
+                    <div className="h-full relative group" >
+                        <p className="w-64 absolute -top-10 -left-16 bg-gray-950 rounded-md px-6 py-1 opacity-0 group-hover:opacity-100" >You can select day from here</p>
+                        <select value={selectedDay} onChange={(e) => setSelectedDay(e.target.value)} className="bg-gray-800 hover:bg-gray-900 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 text-lg font-medium outline-none cursor-pointer" >
+                            <option value="Monday" >Monday</option>
+                            <option value="Tuesday" >Tuesday</option>
+                            <option value="Wednesday" >Wednesday</option>
+                            <option value="Thursday" >Thursday</option>
+                            <option value="Friday" >Friday</option>
+                            <option value="Saturday" >Saturday</option>
+                            <option value="Sunday" >Sunday</option>
+                        </select>
+                    </div>
                     <div className="h-full relative group" >
                         <p className="w-72 absolute -top-10 -left-20 bg-gray-950 rounded-md px-5 py-1 opacity-0 group-hover:opacity-100" >You can select semester from here</p>
                         <select value={selectedSemester} onChange={(e) => setSelectedSemester(e.target.value)} className="bg-gray-800 hover:bg-gray-900 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 text-lg font-medium outline-none cursor-pointer" >

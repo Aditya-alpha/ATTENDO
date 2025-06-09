@@ -5,6 +5,7 @@ import { Tooltip } from 'react-tooltip'
 import './heatmap.css'
 
 export default function Heatmap({ activityData, setSelectedDate }) {
+    let daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     return (
         <div className='scale-[0.9] w-full h-full max-w-[850px] border-white border-4 p-4'>
             <CalendarHeatmap
@@ -27,7 +28,7 @@ export default function Heatmap({ activityData, setSelectedDate }) {
                             : 'Not Attended'
                     return {
                         'data-tooltip-id': 'attendance-tooltip',
-                        'data-tooltip-content': `${value.date}: ${attendanceText}`,
+                        'data-tooltip-content': `${daysOfWeek[new Date(value.date).getDay()]}, ${value.date}: ${attendanceText}`,
                     }
                 }}
                 onClick={(value) => {

@@ -71,6 +71,7 @@ export default function ShowRecords() {
             alert("An error occurred. Please try again.")
         }
     }
+    let daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
     return (
         <div className="h-full min-h-screen w-full bg-gray-900 text-white px-20 pb-12" >
@@ -78,6 +79,7 @@ export default function ShowRecords() {
             <div className="w-full flex justify-between mt-6" >
                 <p className="text-3xl font-medium" >Attendance Records</p>
                 <div className="flex gap-8 font-bold" >
+                    <p className="bg-gray-800 border-[1px] border-gray-500 rounded-md px-8 py-2" >{daysOfWeek[new Date(attendanceData?.date).getDay()]}</p>
                     <p className="bg-gray-800 border-[1px] border-gray-500 rounded-lg px-8 py-2" >{attendanceData?.semester}</p>
                     <p className="bg-gray-800 border-[1px] border-gray-500 rounded-lg px-6 py-2" >{attendanceData?.branch}</p>
                     <input id="date-input" type="date" value={targetDate} onChange={(e) => handleFetchAttendanceData(e)} onClick={() => document.getElementById("date-input").showPicker()} onFocus={(e) => e.target.blur()} className="bg-blue-900 hover:bg-blue-900/50 transition border-[1px] border-gray-500 rounded-lg px-4 py-2 outline-none cursor-pointer" />

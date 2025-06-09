@@ -32,6 +32,7 @@ export default function ShowAnalysis() {
         lastAttended: ""
     }])
 
+    let [subjectList, setSubjectList] = useState([])
     let [selectedSubject, setSelectedSubject] = useState("")
     let [activityData, setActivityData] = useState([])
     let [selectedDate, setSelectedDate] = useState("")
@@ -107,8 +108,11 @@ export default function ShowAnalysis() {
                 ? ((entry.attended / entry.totalClasses) * 100).toFixed(2)
                 : "0.00"
         }))
+        setSubjectList(result.map(res => res.subject))
         setAnalysedData(result)
     }, [attendanceData])
+
+    let daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
 
     return (
@@ -126,8 +130,8 @@ export default function ShowAnalysis() {
                 <div className="flex items-center gap-6 text-lg font-medium" >
                     <p className="text-2xl" >Subject: </p>
                     <select value={selectedSubject} onChange={(e) => setSelectedSubject(e.target.value)} className="outline-none bg-gray-800 hover:bg-gray-900 transition border-[1px] border-gray-500 px-4 py-2 rounded-lg min-w-32 cursor-pointer" >
-                        {attendanceData[0]?.attendance.map((att, i) => (
-                            <option key={i} value={att.subject} >{att.subject}</option>
+                        {subjectList?.map((subject, i) => (
+                            <option key={i} value={subject} >{subject}</option>
                         ))}
                     </select>
                 </div>
@@ -212,7 +216,13 @@ export default function ShowAnalysis() {
                                     <p className="w-1/5 border-[1px] px-3 py-4 flex items-center justify-center" >{data.totalClasses}</p>
                                     <p className="w-1/5 border-[1px] px-3 py-4 flex items-center justify-center" >{data.attended}</p>
                                     <p className="w-1/5 border-[1px] px-3 py-4 flex items-center justify-center" >{data.percentage}%</p>
-                                    <p className="w-1/5 border-[1px] px-3 py-4 flex items-center justify-center" >{data.lastAttended || "-"}</p>
+                                    <p className="w-1/5 border-[1px] px-3 py-4 flex items-center justify-center" >
+                                        {data.lastAttended ?
+                                            `${data.lastAttended} (${daysOfWeek[new Date(data.lastAttended).getDay()]})`
+                                            :
+                                            "-"
+                                        }
+                                    </p>
                                 </div>
                             )}
                         </div>

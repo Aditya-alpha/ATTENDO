@@ -49,7 +49,7 @@ export default function Navbar() {
                         <button onClick={() => navigate(`/${username}/attendance_analysis`)} >Analysis</button>
                         <GiHamburgerMenu ref={buttonRef} onClick={() => setIsMenuOpen(prev => !prev)} className='text-3xl cursor-pointer' />
                         {isMenuOpen &&
-                            <div ref={menuRef} className="absolute right-0 top-16 text-md flex flex-col bg-gray-800 rounded-lg border-[1px] border-gray-500 tracking-wider shadow-lg shadow-gray-950" >
+                            <div ref={menuRef} className="absolute right-0 top-16 z-50 text-md flex flex-col bg-gray-800 rounded-lg border-[1px] border-gray-500 tracking-wider shadow-lg shadow-gray-950" >
                                 {username === "Aditya Bandral" &&
                                     <button onClick={() => navigate("/update_time-table")} className='hover:bg-gray-700 px-8 py-2 rounded-tl-lg rounded-tr-lg transition duration-200' >Update TT</button>
                                 }

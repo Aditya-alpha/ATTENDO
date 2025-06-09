@@ -274,6 +274,7 @@ export default function ShowTimeTable() {
                                 <p className="text-3xl font-medium" >Time-Table</p>
                                 <div className="flex gap-12 items-center font-bold" >
                                     <button onClick={handleResetTT} className="bg-red-600 hover:bg-red-700 transition rounded-md px-6 py-2" >Reset Time Table</button>
+                                    <p className="bg-gray-800 border-[1px] border-gray-500 rounded-md px-8 py-2" >{ttData.day}</p>
                                     <p className="bg-gray-800 border-[1px] border-gray-500 rounded-md px-8 py-2" >{ttData.semester}</p>
                                     <p className="bg-gray-800 border-[1px] border-gray-500 rounded-md px-6 py-2" >{ttData.branch}</p>
                                 </div>
@@ -289,7 +290,11 @@ export default function ShowTimeTable() {
                                         <div className={`w-1/5 bg-gray-800 ${!isTimeEditing[i] && "hover:bg-gray-800/50"} rounded-lg px-4 py-2 border-[1px] border-gray-500`} >
                                             {isTimeEditing[i] ?
                                                 <div className="flex justify-between" >
-                                                    <input value={newTiming} onChange={(e) => setNewTiming(e.target.value)} autoFocus className="w-full bg-gray-800 outline-none pr-6" />
+                                                    <select value={newTiming} onChange={(e) => setNewTiming(e.target.value)} className="w-full bg-gray-800 outline-none mr-2" >
+                                                        {ttData.schedule.map((sch, i) =>
+                                                            <option key={i} value={sch.time} >{sch.time}</option>
+                                                        )}
+                                                    </select>
                                                     <MdDone onClick={() => { handleEditing("time", i); handleSaveTimeEdit(i) }} className="text-2xl mt-1 cursor-pointer" />
                                                 </div>
                                                 :
@@ -302,7 +307,11 @@ export default function ShowTimeTable() {
                                         <div className={`w-1/3 bg-gray-800 ${!isSubjectEditing[i] && "hover:bg-gray-800/50"} rounded-lg px-4 py-2 border-[1px] border-gray-500`} >
                                             {isSubjectEditing[i] ?
                                                 <div className="flex justify-between" >
-                                                    <input value={subjectName} onChange={(e) => setSubjectName(e.target.value)} autoFocus placeholder="Enter subject name" className="w-full bg-gray-800 outline-none pr-6" />
+                                                    <select value={subjectName} onChange={(e) => setSubjectName(e.target.value)} className="w-full bg-gray-800 outline-none mr-12" >
+                                                        {ttData.schedule.map((sch, i) =>
+                                                            <option key={i} value={sch.subject} >{sch.subject}</option>
+                                                        )}
+                                                    </select>
                                                     <MdDone onClick={() => { handleEditing("subject", i); handleSaveSubjectEdit(i) }} className="text-2xl mt-1 cursor-pointer" />
                                                 </div>
                                                 :
