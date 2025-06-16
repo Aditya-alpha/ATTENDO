@@ -10,6 +10,8 @@ require("dotenv").config()
 const multer = require('multer')
 const cloudinary = require("./uploadProfilePhoto")
 const { CloudinaryStorage } = require('multer-storage-cloudinary')
+const jwt = require('jsonwebtoken')
+const cookieParser = require('cookie-parser')
 
 const app = express()
 
@@ -20,6 +22,7 @@ const corsOptions = {
 }
 
 const PORT = process.env.PORT || 3000
+const JWT_SECRET = process.env.JWT_SECRET
 
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
@@ -35,6 +38,7 @@ const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 * 1024
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors(corsOptions))
+app.use(cookieParser())
 
 app.get("/", () => {
     console.log("Hello")
@@ -51,7 +55,9 @@ app.post("/login", async (req, res) => {
         if (!isPasswordValid) {
             return res.status(403).send({ message: "Password is incorrect" });
         }
-        return res.status(200).send(isUser)
+        let token = jwt.sign({ username: isUser.username, email: isUser.email }, JWT_SECRET, { expiresIn: "7d" })
+        res.cookie("token", token)
+        res.status(200).send({message: "Login successful.", username: isUser.username})
     }
     catch (error) {
         res.status(500).send({ message: "Internal server error" })
@@ -155,10 +161,12 @@ app.post("/signup/otp", async (req, res) => {
                 password: otpdata.password,
                 profile_photo: otpdata.profile_photo,
                 branch: branch,
-                semester: "Sem 1"
+                semester: "Sem I"
             })
+            let token = jwt.sign({ username: otpdata.username, email: otpdata.email }, JWT_SECRET, { expiresIn: "7d" })
+            res.cookie("token", token)
             await Otp.deleteOne({ email })
-            res.status(200).send({ message: "Signup successful!" })
+            res.status(200).send({ message: "Signup successful!", username: otpdata.username })
         }
         else {
             res.status(403).send("Incorrect OTP")
@@ -187,6 +195,30 @@ app.post("/signup/resend-otp", async (req, res) => {
     }
     catch (error) {
         res.status(500).send({ message: "Internal server error" })
+    }
+})
+
+app.get("/logout", async (req, res) => {
+    let token = req.cookies.token
+    if (!token) return res.status(401).send("Unauthorized !")
+    try {
+        res.clearCookie("token")
+        res.status(200).send("Logged out successfully")
+    }
+    catch (error) {
+        res.status(500).send({ message: "Internal servor error! Please try again." })
+    }
+})
+
+app.get("/get_username", async (req, res) => {
+    let token = req.cookies.token
+    if (!token) return res.status(401).send("Unauthorized !")
+    try {
+        let data = jwt.verify(token, JWT_SECRET)
+        res.status(200).json({username: data.username})
+    }
+    catch (error) {
+        res.status(500).send({ message: "Internal servor error! Please try again." })
     }
 })
 

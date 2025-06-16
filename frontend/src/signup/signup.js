@@ -35,6 +35,7 @@ export default function Signup() {
             alert("Password must contain atleast 8 characters.")
             return
         }
+        navigate("/signup/otp")
         setIsFetching(true)
         try {
             let response = await fetch("http://localhost:8000/signup", {
@@ -46,9 +47,7 @@ export default function Signup() {
             })
             const data = await response.json()
             if (response.ok) {
-                window.localStorage.setItem("username", userInfo.username)
                 window.localStorage.setItem("email", userInfo.email)
-                navigate("/signup/otp")
             }
             else if (response.status === 408) {
                 alert(`${data.message}`)
@@ -58,6 +57,7 @@ export default function Signup() {
             }
             else {
                 alert("An unexpected error occured.")
+                navigate("/")
             }
         }
         catch (error) {

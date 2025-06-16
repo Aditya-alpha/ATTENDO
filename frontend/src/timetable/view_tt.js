@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import Navbar from "../navbar/navbar"
+import { Context } from "../App"
 
 export default function ShowTimeTable() {
 
-    let username = window.localStorage.getItem("username")
+    let { username } = useContext(Context)
     let [ttData, setTtData] = useState({
         branch: "",
         semester: "",
@@ -17,19 +18,23 @@ export default function ShowTimeTable() {
 
     useEffect(() => {
         async function handleFetchUserInfo() {
+            if (!username) return
             try {
                 const response = await fetch(`http://localhost:8000/${username}/view_time-table`, {
                     method: "GET"
                 })
                 if (response.ok) {
                     let data = await response.json()
-                    setSelectedBranch(data.branch)
-                    setSelectedSemester(data.semester)
-                    let daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-                    setSelectedDay(daysOfWeek[new Date().getDay()])
+                    if (data) {
+                        setSelectedBranch(data.branch)
+                        setSelectedSemester(data.semester)
+                        let daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+                        setSelectedDay(daysOfWeek[new Date().getDay()])
+                    }
                 }
             }
             catch (error) {
+                console.log(error)
                 alert("An error occurred. Please try again.")
             }
         }

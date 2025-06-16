@@ -8,13 +8,12 @@ import { useNavigate } from "react-router-dom"
 export default function Home() {
 
     let navigate = useNavigate()
-    let [isSignedin] = useContext(Context)
-    let username = window.localStorage.getItem("username")
+    let {username} = useContext(Context)
 
     return (
         <div className="min-h-screen w-full bg-gray-900 text-white px-20 pb-12" >
             <Navbar />
-            {isSignedin ?
+            {username ?
                 <div className="my-8" >
                     <div className="flex flex-col items-center gap-6 px-8 py-20 bg-gradient-to-br from-indigo-800 to-gray-900" >
                         <p className="text-5xl font-bold text-indigo-200" >Welcome, {username} 👋</p>

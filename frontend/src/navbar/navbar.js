@@ -2,20 +2,16 @@ import { useEffect, useContext, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Context } from '../App'
 import { GiHamburgerMenu } from "react-icons/gi"
+import logo from "../images/attendo_logo.png"
 
 export default function Navbar() {
 
     let navigate = useNavigate()
 
-    let [isSignedin, setIsSignedin] = useContext(Context)
-    let username = window.localStorage.getItem("username")
+    let { username, setUsername } = useContext(Context)
     let [isMenuOpen, setIsMenuOpen] = useState(false)
     let menuRef = useRef()
     let buttonRef = useRef()
-
-    useEffect(() => {
-        setIsSignedin(window.localStorage.getItem("isSignedin"))
-    }, [setIsSignedin])
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -29,21 +25,33 @@ export default function Navbar() {
         }
     }, [])
 
-    function handleLogout() {
-        window.localStorage.removeItem("isSignedin")
-        window.localStorage.removeItem("username")
-        setIsSignedin(false)
-        navigate("/")
+    async function handleLogout() {
+        try {
+            const response = await fetch("http://localhost:8000/logout", {
+                method: "GET",
+                credentials: "include"
+            })
+            if (response.ok) {
+                setUsername(null)
+                navigate("/")
+            }
+            else {
+                alert("Failed to logout.")
+            }
+        }
+        catch (error) {
+            alert("An error occurred. Please try again.")
+        }
     }
 
     return (
-        <div className="w-full t-2 flex justify-between items-center text-lg font-semibold py-6 relative" >
-            <p>Attendo</p>
-            <div className="flex gap-12" >
+        <div className="w-full t-2 flex justify-between items-center text-lg font-semibold relative" >
+            <img src={logo} onClick={() => navigate("/")} className='h-16 w-24 cursor-pointer' />
+            <div className="flex gap-12 py-8" >
                 <button onClick={() => navigate("/")} >Home</button>
                 <button onClick={() => navigate("/about")} >About</button>
                 <button onClick={() => navigate("/help")} >Help</button>
-                {isSignedin ?
+                {username ?
                     <div className='flex gap-12' >
                         <button onClick={() => navigate(`/${username}/mark_attendance`)} >Mark Attendance</button>
                         <button onClick={() => navigate(`/${username}/attendance_analysis`)} >Analysis</button>

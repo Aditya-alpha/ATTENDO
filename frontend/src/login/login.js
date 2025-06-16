@@ -1,11 +1,12 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { RxCross2 } from "react-icons/rx"
 import { useNavigate } from "react-router-dom"
+import { Context } from "../App"
 
 export default function Login() {
 
     let navigate = useNavigate()
-
+    let { setUsername } = useContext(Context)
     let [userInfo, setUserInfo] = useState({
         email: "",
         password: ""
@@ -21,10 +22,12 @@ export default function Login() {
             alert("Please enter your email address before proceeding.")
             return
         }
-        else {
-            navigate("/login/forgotpassword")
-            window.localStorage.setItem("email", userInfo.email)
+        if (!userInfo.email.endsWith("vjti.ac.in")) {
+            alert("Email must be a valid Gmail address (e.g., example@xyz.vjti.ac.in).")
+            return
         }
+        navigate("/login/forgotpassword")
+        window.localStorage.setItem("email", userInfo.email)
     }
 
     async function handleLogin(e) {
@@ -49,12 +52,12 @@ export default function Login() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(userInfo)
+                body: JSON.stringify(userInfo),
+                credentials: "include"
             })
             if (response.ok) {
-                const data = await response.json()
-                window.localStorage.setItem("username", data.username)
-                window.localStorage.setItem("isSignedin", true)
+                let data = await response.json()
+                setUsername(data.username)
                 alert("Signin successful !")
                 navigate("/")
             }

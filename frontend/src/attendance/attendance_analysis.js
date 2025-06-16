@@ -1,16 +1,17 @@
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import Navbar from "../navbar/navbar"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import Heatmap from "../visualizations/heatmap"
 import CircularProgress from "../visualizations/percentageImage"
 import AttendanceBarChart from "../visualizations/bargraph"
 import { BiToggleLeft, BiToggleRight } from "react-icons/bi"
+import { Context } from "../App"
 
 
 export default function ShowAnalysis() {
 
     let navigate = useNavigate()
-    let { username } = useParams()
+    let { username } = useContext(Context)
     let [attendanceData, setAttendanceData] = useState([{
         username: username,
         branch: "",

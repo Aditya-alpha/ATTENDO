@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Navbar from "../navbar/navbar"
 import default_profile_photo from "../images/default_profile.png"
 import { MdCheckBox } from "react-icons/md"
 import { LiaEditSolid } from "react-icons/lia"
 import { RxCross2 } from "react-icons/rx"
+import { Context } from "../App"
 
 
 export default function Profile() {
 
     let navigate = useNavigate()
-    let username = window.localStorage.getItem("username")
+    let { username, setUsername } = useContext(Context)
     let [userInfo, setUserInfo] = useState({
         username: "",
         email: "",
@@ -26,6 +27,7 @@ export default function Profile() {
     let [isPublicEditing, setIsPublicEditing] = useState(false)
 
     useEffect(() => {
+        if (!username) return
         async function handleFetchUserInfo() {
             try {
                 const response = await fetch(`http://localhost:8000/${username}/profile`, {
@@ -121,10 +123,23 @@ export default function Profile() {
         navigate(`/${username}/profile/updatepassword`)
     }
 
-    function handleLogout() {
-        window.localStorage.removeItem("isSignedin")
-        window.localStorage.removeItem("username")
-        navigate("/")
+    async function handleLogout() {
+        try {
+            const response = await fetch("http://localhost:8000/logout", {
+                method: "GET",
+                credentials: "include"
+            })
+            if (response.ok) {
+                setUsername(null)
+                navigate("/")
+            }
+            else {
+                alert("Failed to logout.")
+            }
+        }
+        catch (error) {
+            alert("An error occurred. Please try again.")
+        }
     }
 
     return (

@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import Navbar from "../navbar/navbar"
 import { MdCheckBox, MdCheckBoxOutlineBlank } from "react-icons/md"
 import { LiaEditSolid } from "react-icons/lia"
 import { MdDone } from "react-icons/md"
 import { IoMdAdd } from "react-icons/io"
+import { Context } from "../App"
 
 export default function ShowTimeTable() {
 
@@ -15,7 +16,7 @@ export default function ShowTimeTable() {
             subject: ""
         }]
     })
-    let username = window.localStorage.getItem("username")
+    let {username} = useContext(Context)
     let [friendName, setFriendName] = useState("")
     let [attendanceData, setAttendanceData] = useState({
         name: friendName,

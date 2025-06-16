@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import Navbar from "../navbar/navbar"
 import { CgCheckO, CgCloseO } from "react-icons/cg"
 import { useNavigate } from "react-router-dom"
+import { Context } from "../App"
 
 export default function ShowRecords() {
 
     let navigate = useNavigate()
-    let username = window.localStorage.getItem("username")
+    let {username} = useContext(Context)
     let [targetDate, setTargetDate] = useState("")
     let [attendanceData, setAttendanceData] = useState({
         name: "",

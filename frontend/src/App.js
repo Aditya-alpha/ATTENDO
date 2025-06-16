@@ -34,11 +34,31 @@ function ScrollToTop() {
 
 function App() {
 
-  let [isSignedin, setIsSignedin] = useState(false)
-  let [username, setUsername] = useState("")
+  let [username, setUsername] = useState(null)
+
+  useEffect(() => {
+    async function handleFetchUsername() {
+      try {
+        const response = await fetch("http://localhost:8000/get_username", {
+          method: "GET",
+          credentials: "include"
+        })
+        if (response.status === 200) {
+          let data = await response.json()
+          if (data) {
+            setUsername(data.username)
+          }
+        }
+      }
+      catch (error) {
+        alert("An error occurred. Please try again.")
+      }
+    }
+    handleFetchUsername()
+  }, [])
 
   return (
-    <Context.Provider value={[isSignedin, setIsSignedin, username, setUsername]} >
+    <Context.Provider value={{ username, setUsername }} >
       <Router>
         <ScrollToTop />
         <Routes>
