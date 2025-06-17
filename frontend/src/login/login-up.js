@@ -36,7 +36,7 @@ export default function ChangePassword() {
             return
         }
         try {
-            const response = await fetch(`http://localhost:8000/login/updatepassword`, {
+            const response = await fetch(`https://attendo-h4oc.onrender.com/login/updatepassword`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -27,7 +27,7 @@ export default function Navbar() {
 
     async function handleLogout() {
         try {
-            const response = await fetch("http://localhost:8000/logout", {
+            const response = await fetch("https://attendo-h4oc.onrender.com/logout", {
                 method: "GET",
                 credentials: "include"
             })

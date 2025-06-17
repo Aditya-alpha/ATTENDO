@@ -50,7 +50,7 @@ export default function UpdateTimeTable() {
             return
         }
         try {
-            const response = await fetch("http://localhost:8000/update_time-table", {
+            const response = await fetch("https://attendo-h4oc.onrender.com/update_time-table", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

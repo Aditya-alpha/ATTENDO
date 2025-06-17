@@ -41,7 +41,7 @@ export default function ShowTimeTable() {
     useEffect(() => {
         async function handleFetchMarkedFriends() {
             try {
-                const response = await fetch(`http://localhost:8000/${username}/mark_for_friend`, {
+                const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/mark_for_friend`, {
                     method: "GET"
                 })
                 if (response.ok) {
@@ -93,7 +93,7 @@ export default function ShowTimeTable() {
         let filteredAttendance = attendanceData.attendance.filter(rec => rec.subject.trim() !== "" && rec.time.trim() !== "")
         let filteredAttendanceData = { ...attendanceData, branch: ttData.branch, semester: ttData.semester, attendance: filteredAttendance }
         try {
-            const response = await fetch(`http://localhost:8000/${username}/mark_attendance`, {
+            const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/mark_attendance`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -174,7 +174,7 @@ export default function ShowTimeTable() {
     async function handleFetchUsers(e) {
         setSearchFriend(e.target.value)
         try {
-            const response = await fetch(`http://localhost:8000/${username}/mark_for_friend`, {
+            const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/mark_for_friend`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -199,7 +199,7 @@ export default function ShowTimeTable() {
 
     async function handleFetchAttendanceData(user, schedule, date) {
         try {
-            const response = await fetch(`http://localhost:8000/${username}/mark_attendance`, {
+            const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/mark_attendance`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -232,7 +232,7 @@ export default function ShowTimeTable() {
 
     async function handleFetchTTData(user) {
         try {
-            const response = await fetch(`http://localhost:8000/${username}/mark_for_friend`, {
+            const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/mark_for_friend`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

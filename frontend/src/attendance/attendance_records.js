@@ -21,7 +21,7 @@ export default function ShowRecords() {
     useEffect(() => {
         async function handleFetchLastDate() {
             try {
-                const response = await fetch(`http://localhost:8000/${username}/attendance_records`, {
+                const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/attendance_records`, {
                     method: "GET"
                 })
                 if (response.status === 200) {
@@ -47,7 +47,7 @@ export default function ShowRecords() {
         let value = e.target.value
         setTargetDate(value)
         try {
-            const response = await fetch(`http://localhost:8000/${username}/attendance_records`, {
+            const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/attendance_records`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

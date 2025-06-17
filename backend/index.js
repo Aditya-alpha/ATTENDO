@@ -57,8 +57,13 @@ app.post("/login", async (req, res) => {
             return res.status(403).send({ message: "Password is incorrect" });
         }
         let token = jwt.sign({ username: isUser.username, email: isUser.email }, JWT_SECRET, { expiresIn: "7d" })
-        res.cookie("token", token)
-        res.status(200).send({message: "Login successful.", username: isUser.username})
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        })
+        res.status(200).send({ message: "Login successful.", username: isUser.username })
     }
     catch (error) {
         res.status(500).send({ message: "Internal server error" })
@@ -165,7 +170,12 @@ app.post("/signup/otp", async (req, res) => {
                 semester: "Sem I"
             })
             let token = jwt.sign({ username: otpdata.username, email: otpdata.email }, JWT_SECRET, { expiresIn: "7d" })
-            res.cookie("token", token)
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "None",
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            })
             await Otp.deleteOne({ email })
             res.status(200).send({ message: "Signup successful!", username: otpdata.username })
         }
@@ -216,7 +226,7 @@ app.get("/get_username", async (req, res) => {
     if (!token) return res.status(401).send("Unauthorized !")
     try {
         let data = jwt.verify(token, JWT_SECRET)
-        res.status(200).json({username: data.username})
+        res.status(200).json({ username: data.username })
     }
     catch (error) {
         res.status(500).send({ message: "Internal servor error! Please try again." })

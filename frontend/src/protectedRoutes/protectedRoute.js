@@ -8,7 +8,7 @@ export default function ProtectedRoute({ children }) {
     useEffect(() => {
         async function checkAuth() {
             try {
-                let response = await fetch("http://localhost:8000/check-auth", {
+                let response = await fetch("https://attendo-h4oc.onrender.com/check-auth", {
                     method: "GET",
                     credentials: "include"
                 })

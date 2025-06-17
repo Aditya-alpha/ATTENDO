@@ -38,7 +38,7 @@ export default function Signup() {
         navigate("/signup/otp")
         setIsFetching(true)
         try {
-            let response = await fetch("http://localhost:8000/signup", {
+            let response = await fetch("https://attendo-h4oc.onrender.com/signup", {
                 method: "POST",
                 headers: {
                     'Content-Type': "application/json"

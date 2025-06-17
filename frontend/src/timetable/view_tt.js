@@ -20,7 +20,7 @@ export default function ShowTimeTable() {
         async function handleFetchUserInfo() {
             if (!username) return
             try {
-                const response = await fetch(`http://localhost:8000/${username}/view_time-table`, {
+                const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/view_time-table`, {
                     method: "GET"
                 })
                 if (response.ok) {
@@ -44,7 +44,7 @@ export default function ShowTimeTable() {
     useEffect(() => {
         async function handleFetchTTData() {
             try {
-                const response = await fetch(`http://localhost:8000/${username}/view_time-table`, {
+                const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/view_time-table`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

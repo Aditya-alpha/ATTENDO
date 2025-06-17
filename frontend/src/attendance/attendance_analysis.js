@@ -42,7 +42,7 @@ export default function ShowAnalysis() {
     useEffect(() => {
         async function handleFetch() {
             try {
-                let response = await fetch(`http://localhost:8000/${username}/attendance_analysis`, {
+                let response = await fetch(`https://attendo-h4oc.onrender.com/${username}/attendance_analysis`, {
                     method: "GET"
                 })
                 if (response.ok) {

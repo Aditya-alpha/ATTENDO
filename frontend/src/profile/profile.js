@@ -30,7 +30,7 @@ export default function Profile() {
         if (!username) return
         async function handleFetchUserInfo() {
             try {
-                const response = await fetch(`http://localhost:8000/${username}/profile`, {
+                const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/profile`, {
                     method: "GET"
                 })
                 if (response.status === 200) {
@@ -52,7 +52,7 @@ export default function Profile() {
 
     async function handleSaveChanges(updatedUserInfo) {
         try {
-            const response = await fetch(`http://localhost:8000/${username}/profile`, {
+            const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/profile`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -73,7 +73,7 @@ export default function Profile() {
         let formData = new FormData()
         formData.append("profile_photo", profile_photo)
         try {
-            const response = await fetch(`http://localhost:8000/${username}/profile/profile_photo`, {
+            const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/profile/profile_photo`, {
                 method: "POST",
                 body: formData
             })
@@ -125,7 +125,7 @@ export default function Profile() {
 
     async function handleLogout() {
         try {
-            const response = await fetch("http://localhost:8000/logout", {
+            const response = await fetch("https://attendo-h4oc.onrender.com/logout", {
                 method: "GET",
                 credentials: "include"
             })

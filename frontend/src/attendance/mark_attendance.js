@@ -40,7 +40,7 @@ export default function ShowTimeTable() {
 
     async function handleFetchAttendanceData(timetable) {
         try {
-            const response = await fetch(`http://localhost:8000/${username}/mark_attendance`, {
+            const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/mark_attendance`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -78,7 +78,7 @@ export default function ShowTimeTable() {
     useEffect(() => {
         async function handleFetchTTData() {
             try {
-                const response = await fetch(`http://localhost:8000/${username}/mark_attendance`, {
+                const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/mark_attendance`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -136,7 +136,7 @@ export default function ShowTimeTable() {
         let filteredAttendance = attendanceData.attendance.filter(rec => rec.subject.trim() !== "" && rec.time.trim() !== "")
         let filteredAttendanceData = { ...attendanceData, attendance: filteredAttendance }
         try {
-            const response = await fetch(`http://localhost:8000/${username}/mark_attendance`, {
+            const response = await fetch(`https://attendo-h4oc.onrender.com/${username}/mark_attendance`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

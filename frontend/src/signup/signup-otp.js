@@ -18,7 +18,7 @@ export default function SignupOTP() {
             return
         }
         try {
-            const response = await fetch("http://localhost:8000/signup/otp", {
+            const response = await fetch("https://attendo-h4oc.onrender.com/signup/otp", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -45,7 +45,7 @@ export default function SignupOTP() {
     async function handleResendOtp() {
         setIsResending(true)
         try {
-            const response = await fetch("http://localhost:8000/signup/resend-otp", {
+            const response = await fetch("https://attendo-h4oc.onrender.com/signup/resend-otp", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
