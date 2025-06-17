@@ -17,7 +17,7 @@ const authenticateUser = require('./authenticateUser')
 const app = express()
 
 const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: 'https://attendo-secure.vercel.app',
     methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
     credentials: true
 }
