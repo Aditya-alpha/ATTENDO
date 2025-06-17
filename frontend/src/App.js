@@ -16,11 +16,12 @@ import MarkForFriend from './attendance/mark_for_friend';
 import Profile from './profile/profile';
 import UpdatePassword from './profile/profile-up';
 import ForgotProfilePassword from './profile/profile-fp';
-import VerifyProfileOtp from './profile/profile-vp'
+import VerifyProfileOtp from './profile/profile-vp';
 import ChangeProfilePassword from './profile/profile-cp';
 import ShowAnalysis from './attendance/attendance_analysis';
 import About from './about/about';
 import Help from './help/help';
+import ProtectedRoute from './protectedRoutes/protectedRoute';
 
 export const Context = React.createContext()
 
@@ -71,17 +72,17 @@ function App() {
           <Route path="/login/updatepassword" element={<ChangePassword />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/signup/otp' element={<SignupOTP />} />
-          <Route path='/:username/view_time_table' element={<ShowTimeTable />} />
-          <Route path='/update_time-table' element={<UpdateTimeTable />} />
-          <Route path='/:username/mark_attendance' element={<MarkAttendance />} />
-          <Route path='/:username/attendance_records' element={<ShowRecords />} />
-          <Route path='/:username/mark_for_friend' element={<MarkForFriend />} />
-          <Route path='/:username/attendance_analysis' element={<ShowAnalysis />} />
-          <Route path='/:username/profile' element={<Profile />} />
-          <Route path='/:username/profile/updatepassword' element={<UpdatePassword />} />
-          <Route path='/:username/profile/forgotpassword' element={<ForgotProfilePassword />} />
-          <Route path='/:username/profile/forgotpassword/verify' element={<VerifyProfileOtp />} />
-          <Route path='/:username/profile/changepassword' element={<ChangeProfilePassword />} />
+          <Route path='/:username/view_time_table' element={<ProtectedRoute><ShowTimeTable /></ProtectedRoute>} />
+          <Route path='/update_time-table' element={<ProtectedRoute><UpdateTimeTable /></ProtectedRoute>} />
+          <Route path='/:username/mark_attendance' element={<ProtectedRoute><MarkAttendance /></ProtectedRoute>} />
+          <Route path='/:username/attendance_records' element={<ProtectedRoute><ShowRecords /></ProtectedRoute>} />
+          <Route path='/:username/mark_for_friend' element={<ProtectedRoute><MarkForFriend /></ProtectedRoute>} />
+          <Route path='/:username/attendance_analysis' element={<ProtectedRoute><ShowAnalysis /></ProtectedRoute>} />
+          <Route path='/:username/profile' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path='/:username/profile/updatepassword' element={<ProtectedRoute><UpdatePassword /></ProtectedRoute>} />
+          <Route path='/:username/profile/forgotpassword' element={<ProtectedRoute><ForgotProfilePassword /></ProtectedRoute>} />
+          <Route path='/:username/profile/forgotpassword/verify' element={<ProtectedRoute><VerifyProfileOtp /></ProtectedRoute>} />
+          <Route path='/:username/profile/changepassword' element={<ProtectedRoute><ChangeProfilePassword /></ProtectedRoute>} />
         </Routes>
       </Router>
     </Context.Provider>

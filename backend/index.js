@@ -12,6 +12,7 @@ const cloudinary = require("./uploadProfilePhoto")
 const { CloudinaryStorage } = require('multer-storage-cloudinary')
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
+const authenticateUser = require('./authenticateUser')
 
 const app = express()
 
@@ -220,6 +221,10 @@ app.get("/get_username", async (req, res) => {
     catch (error) {
         res.status(500).send({ message: "Internal servor error! Please try again." })
     }
+})
+
+app.get("/check-auth", authenticateUser, (req, res) => {
+    res.status(200).json({ authenticated: true, username: req.user.username });
 })
 
 app.post("/update_time-table", async (req, res) => {
